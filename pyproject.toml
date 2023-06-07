@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "pet-project"
+version = "0.1.0"
+description = ""
+authors = ["Valekantina <vgordynska@gmail.com>"]
+readme = "README.md"
+packages = [{include = "pet_project"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.95.2"
+uvicorn = {extras = ["standard"], version = "^0.22.0"}
+sqlalchemy = "^2.0.15"
+psycopg2 = "^2.9.6"
+alembic = "^1.11.1"
+fastapi-limiter = "^0.1.5"
+redis = "^4.5.5"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+passlib = "^1.7.4"
+cloudinary = "^1.33.0"
+fastapi-mail = "^1.2.8"
+libgravatar = "^1.0.4"
+qrcode = "^7.4.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
