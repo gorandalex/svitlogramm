@@ -1,6 +1,6 @@
 ## Svitlogramm REST API Service for Posting, Transforming, and Commenting on Images
 
-<img src="Svitlogramm.JPG" align="center" style="width: 860px"  />
+<img src="Svitlogramm.jpg" align="center" style="width: 860px"  />
 
 This is a REST API service that allows users to post images, transform them and comment on them. It is built using Python, FastAPI, SQLAlchemy, Cloudinary, and qrcode.
 
