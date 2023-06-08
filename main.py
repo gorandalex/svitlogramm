@@ -94,7 +94,7 @@ async def root(request: Request):
 
 
 @app.get("/api/healthchecker")
-async def healthchecker(db: Session = Depends(get_db)):
+def healthchecker(db: Session = Depends(get_db)):
     """
     The healthchecker function is a simple function that checks if the database is configured correctly.
     It does this by executing a query and checking if it returns any results. If it doesn't, then there's something wrong with the database configuration.
@@ -105,7 +105,7 @@ async def healthchecker(db: Session = Depends(get_db)):
     """
     try:
         result = (
-            await db.execute(text("SELECT 1"))  # noqa
+            db.execute(text("SELECT 1"))  # noqa
         ).fetchone()
 
         if result is None:

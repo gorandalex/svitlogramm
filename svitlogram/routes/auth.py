@@ -38,7 +38,8 @@ async def signup(
     :param db: AsyncSession: Get the database session
     :return: A dictionary with the user and a detail message
     """
-    exist_user = await repository_users.get_user_by_email_or_username(body.email, body.username, db)
+
+    exist_user = repository_users.get_user_by_email_or_username(body.email, body.username, db)
 
     if exist_user:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT,
