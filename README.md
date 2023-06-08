@@ -1,4 +1,4 @@
-## $\color{yellow}{Svitlo}$$\color{green}{gramm}$
+### $\color{blue}{Svitlogramm}$
 
 <img src="Svitlogram.jpg" align="center" style="width: 550px"  />
 
