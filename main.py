@@ -10,8 +10,8 @@ from fastapi_limiter import FastAPILimiter
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from pet_project.database.connect import get_db
-from pet_project.routes import router
+from svitlogram.database.connect import get_db
+from svitlogram.routes import router
 from config import (
     settings,
     PROJECT_NAME,
@@ -25,7 +25,7 @@ from config import (
 def get_application():
     """
     The get_application function is a factory function that returns an instance of the FastAPI application.
-    
+
     :return: The fastapi application
     :doc-author: Trelent
     """
@@ -44,6 +44,7 @@ def get_application():
 
 app = get_application()
 
+
 @app.middleware("http")
 async def ban_ips(request: Request, call_next: Callable):
     """
@@ -59,6 +60,7 @@ async def ban_ips(request: Request, call_next: Callable):
     response = await call_next(request)
     return response
 
+
 @app.on_event("startup")
 async def startup():
     """
@@ -68,13 +70,16 @@ async def startup():
     :return: A coroutine, so we need to run it
     :doc-author: Trelent
     """
-    await FastAPILimiter.init(
-        await redis.Redis(host=settings.redis_host, port=settings.redis_port, password=settings.redis_password,
-                          db=0, encoding="utf-8", decode_responses=True)
-    )
+    # await FastAPILimiter.init(
+    #     await redis.Redis(host=settings.redis_host, port=settings.redis_port, password=settings.redis_password,
+    #                       db=0, encoding="utf-8", decode_responses=True)
+    # )
+    r = await redis.Redis(host=settings.redis_host, port=settings.redis_port,
+                           db=0, encoding="utf-8", decode_responses=True) #, password=settings.redis_password
+    await FastAPILimiter.init(r)
 
 
-@app.get("/", name="Valekantina_Pet_Projest_Photo")
+@app.get("/", name="Svitlogram_api")
 def read_root():
     """
     The read_root function returns a dictionary with the key &quot;message&quot; and value &quot;REST APP v-0.2&quot;.

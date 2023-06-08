@@ -6,7 +6,7 @@ from pydantic import BaseSettings, EmailStr
 from fastapi.templating import Jinja2Templates
 
 
-PROJECT_NAME = "Pet_Project_Photo"
+PROJECT_NAME = "Svitlogram_Photo"
 VERSION = "1.0.0"
 API_PREFIX = "/api"
 
@@ -23,31 +23,31 @@ ORIGINS = [
 
 @dataclass(frozen=True)
 class Template:
-    emails: Path = BASE_DIR / 'pet_project' / 'templates' / 'emails'
+    emails: Path = BASE_DIR / 'svitlogram' / 'templates' / 'emails'
     html_response: Jinja2Templates = Jinja2Templates(
-        directory=BASE_DIR / 'pet_project' / 'templates' / 'response')
+        directory=BASE_DIR / 'svitlogram' / 'templates' / 'response')
 
 
 class Settings(BaseSettings):
-    db_url: str = "{DB_TYPE}+{DB_CONNECTOR}://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
+    db_url: str = "postgresql://postgres:password@localhost:5432/postgres"
 
     secret_key_jwt: str = "secret_key_jwt"
     algorithm: str = "HS256"
 
-    mail_username: EmailStr
-    mail_password: str
-    mail_from: EmailStr
-    mail_port: int
-    mail_server: str
-    mail_from_name: str
+    mail_username: str = "example@meta.ua"
+    mail_password: str = "qwerty"
+    mail_from: str = "example@meta.ua"
+    mail_port: int = 465
+    mail_server: str = "smtp.test.com"
+    mail_from_name: str = "Name"
 
-    redis_host: str
-    redis_port: int
-    redis_password: str
+    redis_host: str = "localhost"
+    redis_port: int = 6379
+    redis_password: str = "qwerty"
 
-    cloudinary_name: str
-    cloudinary_api_key: int
-    cloudinary_api_secret: str
+    cloudinary_name: str = "cloudinary name"
+    cloudinary_api_key: int = "0000000000000000"
+    cloudinary_api_secret: str = "secret"
     cloudinary_folder: str = "media"
 
     class Config:
