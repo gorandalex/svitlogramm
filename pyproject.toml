@@ -4,7 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["Valekantina <vgordynska@gmail.com>"]
 readme = "README.md"
-packages = [{include = "pet_project"}]
+packages = [{include = "svitlogram"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -21,6 +21,7 @@ cloudinary = "^1.33.0"
 fastapi-mail = "^1.2.8"
 libgravatar = "^1.0.4"
 qrcode = "^7.4.2"
+python-multipart = "^0.0.6"
 
 
 [build-system]

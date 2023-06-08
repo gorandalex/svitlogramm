@@ -5,7 +5,7 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from pet_project.database.models import Base
+from svitlogram.database.models import Base
 from config import settings
 
 # this is the Alembic Config object, which provides
