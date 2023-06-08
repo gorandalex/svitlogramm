@@ -29,7 +29,7 @@ class Template:
 
 
 class Settings(BaseSettings):
-    db_url: str = "postgresql://postgres:password@localhost:5432/postgres"
+    DATABASE_URL: str = "postgresql://postgres:password@localhost:5432/postgres"
 
     secret_key_jwt: str = "secret_key_jwt"
     algorithm: str = "HS256"
