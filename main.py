@@ -1,10 +1,14 @@
 from typing import Callable
 from ipaddress import ip_address
 
+from pathlib import Path
 import uvicorn
 import redis.asyncio as redis
 from fastapi import FastAPI, Depends, HTTPException, status, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
 from fastapi_limiter import FastAPILimiter
 from sqlalchemy import text
@@ -79,16 +83,14 @@ async def startup():
     await FastAPILimiter.init(r)
 
 
-@app.get("/", name="Svitlogram_api")
-def read_root():
-    """
-    The read_root function returns a dictionary with the key &quot;message&quot; and value &quot;REST APP v-0.2&quot;.
-        This is the root of our API, so it's just a simple message to let us know that we're connected.
-    
-    :return: A dictionary
-    :doc-author: Trelent
-    """
-    return {"message": "REST APP v-0.2"}
+templates = Jinja2Templates(directory="templates")
+BASE_DIR = Path(__file__).parent
+app.mount("/static", StaticFiles(directory=BASE_DIR/"static"), name="static")
+
+
+@app.get("/", name="Svitlogram_api", response_class=HTMLResponse)
+async def root(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
 
 @app.get("/api/healthchecker")
