@@ -22,6 +22,8 @@ fastapi-mail = "^1.2.8"
 libgravatar = "^1.0.4"
 qrcode = "^7.4.2"
 python-multipart = "^0.0.6"
+bcrypt = "^4.0.1"
+strenum = "^0.4.10"
 
 
 [build-system]
