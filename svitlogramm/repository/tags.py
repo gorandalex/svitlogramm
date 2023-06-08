@@ -3,8 +3,8 @@ from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
-from pet_project.database.models import Tag
-from pet_project.schemas.tag import TagBase
+from svitlogramm.database.models import Tag
+from svitlogramm.schemas.tag import TagBase
 
 
 async def get_tags(skip: int, limit: int, db: AsyncSession) -> list[Tag]:

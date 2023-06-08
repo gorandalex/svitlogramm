@@ -4,8 +4,8 @@ from typing import Optional
 from sqlalchemy import ForeignKey, CheckConstraint, UniqueConstraint, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from pet_project.database.models.base import Base
-from pet_project.database.models.users import User
+from svitlogramm.database.models.base import Base
+from svitlogramm.database.models.users import User
 
 
 class ImageRating(Base):

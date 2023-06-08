@@ -10,9 +10,9 @@ from fastapi import HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from pet_project.database.connect import get_db
-from pet_project.repository import users as repository_users
-from pet_project.database.models import User
+from svitlogramm.database.connect import get_db
+from svitlogramm.repository import users as repository_users
+from svitlogramm.database.models import User
 from config import settings
 
 

@@ -1,7 +1,7 @@
 from fastapi import Depends, HTTPException, status
 
-from pet_project.database.models import UserRole, User
-from pet_project.services.auth import get_current_active_user
+from svitlogramm.database.models import UserRole, User
+from svitlogramm.services.auth import get_current_active_user
 
 
 class UserRoleFilter:

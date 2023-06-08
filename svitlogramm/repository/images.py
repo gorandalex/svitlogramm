@@ -1,6 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from pet_project.database.models import Image, Tag
+from svitlogramm.database.models import Image, Tag
 from typing import Optional
 
 from .tags import get_or_create_tags

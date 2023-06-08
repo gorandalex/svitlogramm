@@ -2,7 +2,7 @@ from pydantic import utils, root_validator
 
 from .core import CoreModel, IDModelMixin, DateTimeModelMixin
 from .tag import TagResponse
-from pet_project.services.cloudinary import formatting_image_url
+from svitlogramm.services.cloudinary import formatting_image_url
 
 
 class ImageBase(CoreModel):

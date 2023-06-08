@@ -4,7 +4,7 @@ from typing import Optional
 
 from pydantic import EmailStr, constr
 
-from pet_project.database.models import UserRole
+from svitlogramm.database.models import UserRole
 from .core import DateTimeModelMixin, IDModelMixin, CoreModel
 
 

@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from pet_project.database.models import ImageFormat, Image
+from svitlogramm.database.models import ImageFormat, Image
 
 
 async def create_image_format(user_id: int, image_id: int, format_: dict, db: AsyncSession) -> Optional[ImageFormat]:

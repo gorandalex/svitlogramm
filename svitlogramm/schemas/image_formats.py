@@ -2,7 +2,7 @@ from typing import Optional
 
 from pydantic import root_validator, utils
 
-from pet_project.services.cloudinary import CroppingOrResizingTransformation, formatting_image_url
+from svitlogramm.services.cloudinary import CroppingOrResizingTransformation, formatting_image_url
 from .core import CoreModel, IDModelMixin, DateTimeModelMixin
 from .image import ImagePublic
 

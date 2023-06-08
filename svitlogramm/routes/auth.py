@@ -6,13 +6,13 @@ from fastapi.security import OAuth2PasswordRequestForm, HTTPAuthorizationCredent
 from fastapi_limiter.depends import RateLimiter
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from pet_project.database.connect import get_db
-from pet_project.database.models import User
-from pet_project.schemas import user as user_schemas
-from pet_project.schemas.token import TokenResponse
-from pet_project.repository import users as repository_users
-from pet_project.services.auth import AuthService, get_current_active_user
-from pet_project.services.email import send_email_confirmed, send_email_reset_password
+from svitlogramm.database.connect import get_db
+from svitlogramm.database.models import User
+from svitlogramm.schemas import user as user_schemas
+from svitlogramm.schemas.token import TokenResponse
+from svitlogramm.repository import users as repository_users
+from svitlogramm.services.auth import AuthService, get_current_active_user
+from svitlogramm.services.email import send_email_confirmed, send_email_reset_password
 from config import Template
 
 

@@ -4,9 +4,9 @@ from sqlalchemy import select, update, or_, func, RowMapping
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from pet_project.database.models import User, UserRole, Image
-from pet_project.schemas.user import UserCreate, ProfileUpdate
-from pet_project.services.gravatar import get_gravatar
+from svitlogramm.database.models import User, UserRole, Image
+from svitlogramm.schemas.user import UserCreate, ProfileUpdate
+from svitlogramm.services.gravatar import get_gravatar
 
 
 async def create_user(body: UserCreate, db: AsyncSession) -> User:

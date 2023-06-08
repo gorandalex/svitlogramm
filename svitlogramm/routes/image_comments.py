@@ -4,13 +4,13 @@ from fastapi import APIRouter, HTTPException, Depends, status
 from fastapi_limiter.depends import RateLimiter
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from pet_project.database.connect import get_db
-from pet_project.database.models import UserRole, User
-from pet_project.schemas.image_comments import CommentBase, CommentPublic, CommentUpdate
-from pet_project.repository import comments as repository_comments
-from pet_project.repository import images as repository_images
-from pet_project.utils.filters import UserRoleFilter
-from pet_project.services.auth import get_current_active_user
+from svitlogramm.database.connect import get_db
+from svitlogramm.database.models import UserRole, User
+from svitlogramm.schemas.image_comments import CommentBase, CommentPublic, CommentUpdate
+from svitlogramm.repository import comments as repository_comments
+from svitlogramm.repository import images as repository_images
+from svitlogramm.utils.filters import UserRoleFilter
+from svitlogramm.services.auth import get_current_active_user
 
 
 router = APIRouter(prefix='/images/comments', tags=["Image comments"])

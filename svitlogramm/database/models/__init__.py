@@ -4,7 +4,7 @@ from .images import Image
 from .image_comments import ImageComment
 from .image_formats import ImageFormat
 from .tags import Tag
-from pet_project.database.models.image_raiting import ImageRating
+from svitlogramm.database.models.image_raiting import ImageRating
 
 
 __all__ = (

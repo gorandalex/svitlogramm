@@ -3,14 +3,14 @@ from typing import Any
 from fastapi import APIRouter, HTTPException, Depends, status, Body
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from pet_project.database.models import UserRole, User
-from pet_project.database.connect import get_db
+from svitlogramm.database.models import UserRole, User
+from svitlogramm.database.connect import get_db
 
-from pet_project.schemas.tag import TagUpdate, TagResponse
-from pet_project.repository import tags as repository_tags
+from svitlogramm.schemas.tag import TagUpdate, TagResponse
+from svitlogramm.repository import tags as repository_tags
 
-from pet_project.utils.filters import UserRoleFilter
-from pet_project.services.auth import get_current_active_user
+from svitlogramm.utils.filters import UserRoleFilter
+from svitlogramm.services.auth import get_current_active_user
 
 router = APIRouter(prefix='/tags', tags=["tags"])
 

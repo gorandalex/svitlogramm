@@ -3,7 +3,7 @@ from typing import Optional
 from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from pet_project.database.models.image_raiting import ImageRating
+from svitlogramm.database.models.image_raiting import ImageRating
 
 
 async def create_rating(user_id: int, rating: int, image_id: int, db: AsyncSession) -> ImageRating:

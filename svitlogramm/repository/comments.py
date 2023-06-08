@@ -3,7 +3,7 @@ from typing import Optional
 from sqlalchemy import update, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from pet_project.database.models.image_comments import ImageComment
+from svitlogramm.database.models.image_comments import ImageComment
 
 
 async def create_comment(user_id: int, image_id: int, data: str, db: AsyncSession) -> ImageComment:

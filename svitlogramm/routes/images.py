@@ -5,12 +5,12 @@ from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException, s
 from fastapi_limiter.depends import RateLimiter
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from pet_project.database.connect import get_db
-from pet_project.database.models import User, UserRole
-from pet_project.repository import images as repository_images
-from pet_project.schemas.image import ImageCreateResponse, ImagePublic, ImageRemoveResponse
-from pet_project.services import cloudinary
-from pet_project.services.auth import get_current_active_user
+from svitlogramm.database.connect import get_db
+from svitlogramm.database.models import User, UserRole
+from svitlogramm.repository import images as repository_images
+from svitlogramm.schemas.image import ImageCreateResponse, ImagePublic, ImageRemoveResponse
+from svitlogramm.services import cloudinary
+from svitlogramm.services.auth import get_current_active_user
 from .docs import images as docs
 
 router = APIRouter(prefix="/images", tags=["Images"])

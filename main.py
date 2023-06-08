@@ -10,8 +10,8 @@ from fastapi_limiter import FastAPILimiter
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from pet_project.database.connect import get_db
-from pet_project.routes import router
+from svitlogramm.database.connect import get_db
+from svitlogramm.routes import router
 from config import (
     settings,
     PROJECT_NAME,

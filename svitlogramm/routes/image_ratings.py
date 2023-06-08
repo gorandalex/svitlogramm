@@ -3,12 +3,12 @@ from typing import Any
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from pet_project.database.connect import get_db
-from pet_project.database.models import User, UserRole
-from pet_project.schemas.image_raitings import ImageRatingCreate, ImageRatingUpdate, ImageRatingResponse
-from pet_project.services.auth import get_current_active_user
-from pet_project.repository import image_ratings as repo_image_ratings
-from pet_project.repository import images as repository_images
+from svitlogramm.database.connect import get_db
+from svitlogramm.database.models import User, UserRole
+from svitlogramm.schemas.image_raitings import ImageRatingCreate, ImageRatingUpdate, ImageRatingResponse
+from svitlogramm.services.auth import get_current_active_user
+from svitlogramm.repository import image_ratings as repo_image_ratings
+from svitlogramm.repository import images as repository_images
 
 router = APIRouter(prefix="/images/ratings", tags=["Image ratings"])
 

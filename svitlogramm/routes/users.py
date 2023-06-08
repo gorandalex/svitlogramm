@@ -5,15 +5,15 @@ from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, status
 from fastapi_limiter.depends import RateLimiter
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from pet_project.database.connect import get_db
-from pet_project.database.models import User, UserRole
-from pet_project.repository import users as repository_users
-from pet_project.schemas.user import UserPublic, ProfileUpdate
+from svitlogramm.database.connect import get_db
+from svitlogramm.database.models import User, UserRole
+from svitlogramm.repository import users as repository_users
+from svitlogramm.schemas.user import UserPublic, ProfileUpdate
 
-from pet_project.schemas import user as user_schemas
-from pet_project.services import cloudinary
-from pet_project.services.auth import AuthService, get_current_active_user
-from pet_project.utils.filters import UserRoleFilter
+from svitlogramm.schemas import user as user_schemas
+from svitlogramm.services import cloudinary
+from svitlogramm.services.auth import AuthService, get_current_active_user
+from svitlogramm.utils.filters import UserRoleFilter
 from config import settings
 
 router = APIRouter(prefix="/users", tags=["Users"])
