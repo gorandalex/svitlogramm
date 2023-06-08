@@ -3,19 +3,21 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Hello</title>
+    <title>Verification email</title>
 </head>
 
 <body>
     <p>Hello {{fullname}}!</p>
-    <p>Thank you for joining. Your email has been verified. Click below to proceed to the website</p>
+    <p>Thank you for signing up for our service.</p>
+    <p>Please click the following link to verify your email address:</p>
     <p>
         <a href="{{host}}api/auth/confirmed_email/{{token}}">
             Click here
         </a>
     </p>
+    <p>If you did not sign up for our service, please ignore this email.</p>
     <p>Thanks,</p>
-    <p>Valekantina</p>
+    <p>Svitlogram</p>
 </body>
 
 </html>
