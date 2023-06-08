@@ -1,6 +1,8 @@
-## Svitlogramm REST API Service for Posting, Transforming, and Commenting on Images
+## $\color{yellow}{Svitlo}$$\color{green}{gramm}$
 
 <img src="Svitlogram.jpg" align="center" style="width: 550px"  />
+
+## REST API Service for Posting, Transforming, and Commenting on Images
 
 This is a REST API service that allows users to post images, transform them and comment on them. It is built using Python, FastAPI, SQLAlchemy, Cloudinary, and qrcode.
 
@@ -23,7 +25,11 @@ qrcode - QR code generator library
 ### Our Team 3:
 
 Developer + Team Lead : [Tetiana Fedoryshena](https://github.com/armandabasi)
-Developer + Scrum Muster: [Kateryna Pomazunova](https://github.com/KatePomazunova)  
+
+Developer + Scrum Muster: [Kateryna Pomazunova](https://github.com/KatePomazunova)
+
 Developer: [Natalia Sokil](https://github.com/Natalkina)
+
 Developer: [Andriy Gorobets](https://github.com/gorandalex)
+
 Developer: [Valentyna Gordynska](https://github.com/Valekantina)
