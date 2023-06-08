@@ -60,7 +60,7 @@ async def get_user_by_email_or_username(email: str, username: str, db: AsyncSess
     return db.query(User).filter(or_(User.email == email, User.username == username)).first()
 
 
-async def get_user_by_username(username: str, db: AsyncSession) -> Optional[User]:
+async def get_user_by_username(username: str, db: Session) -> Optional[User]:
     """
     The get_user_by_username function returns a user object from the database based on the username.
 
@@ -68,13 +68,10 @@ async def get_user_by_username(username: str, db: AsyncSession) -> Optional[User
     :param db: AsyncSession: Pass in the database session
     :return: A user object
     """
-    return await db.scalar(
-        select(User)
-        .filter(User.username == username)
-    )
+    return db.query(User).filter(User.username == username).first()
 
 
-async def get_user_by_id(user_id: int, db: AsyncSession) -> Optional[User]:
+async def get_user_by_id(user_id: int, db: Session) -> Optional[User]:
     """
     The get_user_by_id function returns a user object from the database.
 
@@ -82,13 +79,10 @@ async def get_user_by_id(user_id: int, db: AsyncSession) -> Optional[User]:
     :param db: AsyncSession: Pass the database session to the function
     :return: A single user object
     """
-    return await db.scalar(
-        select(User)
-        .filter(User.id == user_id)
-    )
+    return db.query(User).filter(User.user_id == user_id).first()
 
 
-async def update_token(user: User, token: Optional[str], db: AsyncSession) -> None:
+async def update_token(user: User, token: Optional[str], db: Session) -> None:
     """
     The update_token function updates the refresh token for a user.
 
@@ -98,7 +92,7 @@ async def update_token(user: User, token: Optional[str], db: AsyncSession) -> No
     :return: None
     """
     user.refresh_token = token
-    await db.commit()
+    db.commit()
 
 
 async def update_avatar(user_id: int, url: str, db: AsyncSession) -> User:
