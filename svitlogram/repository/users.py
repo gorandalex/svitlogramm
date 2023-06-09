@@ -1,5 +1,9 @@
+import logging
+
 from typing import Optional
 
+from libgravatar import Gravatar
+from sqlalchemy.orm import Session
 from sqlalchemy import select, update, or_, func, RowMapping
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -9,7 +13,7 @@ from svitlogram.schemas.user import UserCreate, ProfileUpdate
 from svitlogram.services.gravatar import get_gravatar
 
 
-async def create_user(body: UserCreate, db: AsyncSession) -> User:
+async def create_user(body: UserCreate, db: Session) -> User:
     """
     The create_user function creates a new user in the database.
 
@@ -17,15 +21,17 @@ async def create_user(body: UserCreate, db: AsyncSession) -> User:
     :param db: AsyncSession: Pass in the database session to the function
     :return: A user object
     """
-    user = User(
-        avatar=await get_gravatar(body.email),
-        **body.dict(),
-    )
+    avatar = None
+    try:
+        gravatar_image = Gravatar(body.email)
+        avatar = gravatar_image.get_image()
+    except Exception as e:
+        logging.error(e)
+    user = User(**body.dict(), avatar=avatar, )
+
     db.add(user)
-
-    await db.commit()
-
-    await db.refresh(user)
+    db.commit()
+    db.refresh(user)
 
     return user
 
@@ -39,10 +45,7 @@ async def get_user_by_email(email: str, db: AsyncSession) -> Optional[User]:
     :param db: AsyncSession: Pass the database session to the function
     :return: A single user or none
     """
-    return await db.scalar(
-        select(User)
-        .filter(User.email == email)
-    )
+    return db.query(User).filter(User.email == email).first()
 
 
 async def get_user_by_email_or_username(email: str, username: str, db: AsyncSession) -> Optional[User]:
@@ -54,10 +57,7 @@ async def get_user_by_email_or_username(email: str, username: str, db: AsyncSess
     :param db: AsyncSession: Pass the database session to the function
     :return: The first user that matches the email or username
     """
-    return await db.scalar(
-        select(User)
-        .filter(or_(User.email == email, User.username == username))
-    )
+    return db.query(User).filter(or_(User.email == email, User.username == username)).first()
 
 
 async def get_user_by_username(username: str, db: AsyncSession) -> Optional[User]:
@@ -171,7 +171,7 @@ async def update_email(user_id: int, email: str, db: AsyncSession) -> Optional[U
     return user
 
 
-async def confirmed_email(user: User, db: AsyncSession) -> None:
+async def confirmed_email(user: User, db: Session) -> None:
     """
     The confirmed_email function marks a user as confirmed in the database.
 
@@ -180,7 +180,7 @@ async def confirmed_email(user: User, db: AsyncSession) -> None:
     :return: None
     """
     user.email_verified = True
-    await db.commit()
+    db.commit()
 
 
 async def update_user_profile(user_id: int, body: ProfileUpdate, db: AsyncSession) -> User:

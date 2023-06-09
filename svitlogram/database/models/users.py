@@ -1,18 +1,21 @@
 import enum
+
+
+from strenum import StrEnum
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import String, func, event
+from sqlalchemy import String, func, event, Column, Enum
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.dialects.postgresql import ENUM
 
 from .base import Base
 
 
-class UserRole(enum.Enum):
-    admin: str = 'admin'
-    moderator: str = 'moderator'
-    user: str = 'user'
+class UserRole(StrEnum):
+    admin = enum.auto()
+    moderator = enum.auto()
+    user = enum.auto()
 
 
 class User(Base):
