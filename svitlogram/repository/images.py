@@ -1,12 +1,13 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 from svitlogram.database.models import Image, Tag
 from typing import Optional
 
 from .tags import get_or_create_tags
 
 
-async def get_image_by_id(image_id: int, db: AsyncSession) -> Image:
+async def get_image_by_id(image_id: int, db: Session) -> Image:
     """
     The get_image_by_id function returns an image from the database.
 
@@ -14,13 +15,13 @@ async def get_image_by_id(image_id: int, db: AsyncSession) -> Image:
     :param db: AsyncSession: Pass in the database session to use
     :return: A single image object
     """
-    return await db.scalar(
+    return db.scalar(
         select(Image)
         .filter(Image.id == image_id)
     )
 
 
-async def create_image(user_id: int, description: str, tags: list[str], public_id: str, db: AsyncSession) -> Image:
+async def create_image(user_id: int, description: str, tags: list[str], public_id: str, db: Session) -> Image:
     """
     The create_image function creates a new image in the database.
 
@@ -42,14 +43,14 @@ async def create_image(user_id: int, description: str, tags: list[str], public_i
 
     db.add(image)
 
-    await db.commit()
+    db.commit()
 
-    await db.refresh(image)
+    db.refresh(image)
 
     return image
 
 
-async def update_description(image_id: int, description: str, tags: list[str], db: AsyncSession) -> Optional[Image]:
+async def update_description(image_id: int, description: str, tags: list[str], db: Session) -> Optional[Image]:
     """
     The update_description function updates the description and tags of an image.
 
@@ -65,13 +66,13 @@ async def update_description(image_id: int, description: str, tags: list[str], d
     if image:
         image.description = description
         image.tags = tags
-        await db.commit()
-        await db.refresh(image)
+        db.commit()
+        db.refresh(image)
 
     return image
 
 
-async def delete_image(image: Image, db: AsyncSession) -> None:
+async def delete_image(image: Image, db: Session) -> None:
     """
     The delete_image function deletes an image from the database.
 
@@ -79,8 +80,8 @@ async def delete_image(image: Image, db: AsyncSession) -> None:
     :param db: AsyncSession: Pass in the database session
     :return: None, which is the default return value for a function that doesn't explicitly return anything
     """
-    await db.delete(image)
-    await db.commit()
+    db.delete(image)
+    db.commit()
 
 
 async def get_images(
@@ -90,7 +91,7 @@ async def get_images(
         tags: list[str],
         image_id: int,
         user_id: int,
-        db: AsyncSession
+        db: Session
 ) -> list[Image]:
     """
     The get_images function is used to retrieve images from the database.
@@ -121,6 +122,6 @@ async def get_images(
     if image_id:
         query = query.filter(Image.id == image_id)
 
-    image = await db.scalars(query.offset(skip).limit(limit))
+    image = db.scalars(query.offset(skip).limit(limit))
 
     return image.unique().all()  # noqa

@@ -71,7 +71,7 @@ async def get_user_by_username(username: str, db: Session) -> Optional[User]:
     return db.query(User).filter(User.username == username).first()
 
 
-async def get_user_by_id(user_id: int, db: Session) -> Optional[User]:
+async def get_user_by_id(user_id: int, db: Session) -> User | None:
     """
     The get_user_by_id function returns a user object from the database.
 
@@ -79,7 +79,7 @@ async def get_user_by_id(user_id: int, db: Session) -> Optional[User]:
     :param db: Session: Pass the database session to the function
     :return: A single user object
     """
-    return db.query(User).filter(User.user_id == user_id).first()
+    return db.query(User).filter(User.id == user_id).first()
 
 
 async def update_token(user: User, token: Optional[str], db: Session) -> None:
@@ -127,12 +127,11 @@ async def update_password(user_id: int, password: str, db: Session) -> User:
     :param db: Session: Pass the database session to the function
     :return: A user object, which is the updated user
     """
-    user = await db.scalar(
-        update(User)
-        .values(password=password)
-        .filter(User.id == user_id)
-        .returning(User)
-    )
+
+
+    user = await get_user_by_id(user_id, db)
+    user.password = password
+
     db.commit()
 
     db.refresh(user)

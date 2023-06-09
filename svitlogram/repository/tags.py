@@ -1,6 +1,7 @@
 from typing import Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 from sqlalchemy import select
 
 from svitlogram.database.models import Tag
@@ -25,7 +26,7 @@ async def get_tags(skip: int, limit: int, db: AsyncSession) -> list[Tag]:
     return tags.all()  # noqa
 
 
-async def get_tags_by_list_values(values: list[str], db: AsyncSession) -> list[Tag]:
+async def get_tags_by_list_values(values: list[str], db: Session) -> list[Tag]:
     """
     The get_tags_by_list_values function takes a list of strings and an AsyncSession object as arguments.
     It returns a list of Tag objects that match the names in the values argument.
@@ -34,7 +35,7 @@ async def get_tags_by_list_values(values: list[str], db: AsyncSession) -> list[T
     :param db: AsyncSession: Pass in the database session
     :return: A list of tag objects
     """
-    tags = await db.scalars(
+    tags = db.scalars(
         select(Tag)
         .filter(Tag.name.in_(values))
     )
@@ -55,7 +56,7 @@ async def get_tag_by_id(tag_id: int, db: AsyncSession) -> Optional[Tag]:
     )
 
 
-async def get_or_create_tags(values: list[str], db: AsyncSession) -> list[Tag]:
+async def get_or_create_tags(values: list[str], db: Session) -> list[Tag]:
     """
     The get_or_create_tags function takes a list of strings and an async database session.
     It returns a list of Tag objects.
@@ -77,16 +78,16 @@ async def get_or_create_tags(values: list[str], db: AsyncSession) -> list[Tag]:
 
     db.add_all(new_tags)
 
-    await db.commit()
+    db.commit()
     for new_tag in new_tags:
-        await db.refresh(new_tag)
+        db.refresh(new_tag)
 
     tags.extend(new_tags)
 
     return tags
 
 
-async def update_tag(tag_id: int, body: TagBase, db: AsyncSession) -> Optional[Tag]:
+async def update_tag(tag_id: int, body: TagBase, db: Session) -> Optional[Tag]:
     """
     The update_tag function updates a tag in the database.
 
@@ -99,13 +100,13 @@ async def update_tag(tag_id: int, body: TagBase, db: AsyncSession) -> Optional[T
 
     if tag:
         tag.name = body.name
-        await db.commit()
-        await db.refresh(tag)
+        db.commit()
+        db.refresh(tag)
 
     return tag
 
 
-async def remove_tag(tag_id: int, db: AsyncSession) -> Optional[Tag]:
+async def remove_tag(tag_id: int, db: Session) -> Optional[Tag]:
     """
     The remove_tag function removes a tag from the database.
 
@@ -116,7 +117,7 @@ async def remove_tag(tag_id: int, db: AsyncSession) -> Optional[Tag]:
     tag = await get_tag_by_id(tag_id, db)
 
     if tag:
-        await db.delete(tag)
-        await db.commit()
+        db.delete(tag)
+        db.commit()
 
     return tag
