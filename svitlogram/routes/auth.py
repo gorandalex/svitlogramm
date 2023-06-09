@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException, Depends, status, Security, Backgro
 from fastapi.responses import HTMLResponse
 from fastapi.security import OAuth2PasswordRequestForm, HTTPAuthorizationCredentials, HTTPBearer
 from fastapi_limiter.depends import RateLimiter
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 
 from svitlogram.database.connect import get_db
 from svitlogram.database.models import User
@@ -24,7 +24,7 @@ security = HTTPBearer()
 async def signup(
         body: user_schemas.UserCreate,
         background_tasks: BackgroundTasks,
-        request: Request, db: AsyncSession = Depends(get_db)
+        request: Request, db: Session = Depends(get_db)
 ) -> Any:
     """
     The signup function creates a new user in the database.
@@ -35,7 +35,7 @@ async def signup(
     :param body: UserModel: Get the user's email and password from the request body
     :param background_tasks: BackgroundTasks: Add tasks to the background queue
     :param request: Request: Get the base url of the server
-    :param db: AsyncSession: Get the database session
+    :param db: Session: Get the database session
     :return: A dictionary with the user and a detail message
     """
 
@@ -56,17 +56,16 @@ async def signup(
 @router.post("/login", response_model=TokenResponse)
 async def login(
         body: OAuth2PasswordRequestForm = Depends(),
-        db: AsyncSession = Depends(get_db)
+        db: Session = Depends(get_db)
 ) -> Any:
     """
     The login function is used to authenticate a user.
 
     :param body: OAuth2PasswordRequestForm: Get the username and password from the request body
-    :param db: AsyncSession: Get the database session
+    :param db: Session: Get the database session
     :return: A dictionary with the access_token, refresh_token and token type
     """
     user = await repository_users.get_user_by_email(body.username, db)
-    # print(user.email_verified)
 
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email")
@@ -88,7 +87,7 @@ async def login(
 async def logout(
         request: Request,
         current_user: User = Depends(get_current_active_user),
-        db: AsyncSession = Depends(get_db)
+        db: Session = Depends(get_db)
 ) -> Any:
     """
     The logout function is used to logout a user.
@@ -97,7 +96,7 @@ async def logout(
 
     :param request: Request: Get the authorization header from the request
     :param current_user: User: Get the current user from the database
-    :param db: AsyncSession: Get the database session
+    :param db: Session: Get the database session
     :return: A message saying that the logout was successful
     """
     access_token = request.headers['Authorization'].split(' ', maxsplit=1)[1]
@@ -111,7 +110,7 @@ async def logout(
 @router.get('/refresh_token', response_model=TokenResponse)
 async def refresh_token(
         credentials: HTTPAuthorizationCredentials = Security(security),
-        db: AsyncSession = Depends(get_db)
+        db: Session = Depends(get_db)
 ) -> Any:
     """
     The refresh_token function is used to refresh the access token.
@@ -119,7 +118,7 @@ async def refresh_token(
         If the user's current refresh token does not match what was passed into this function, then it will return an error.
 
     :param credentials: HTTPAuthorizationCredentials: Retrieve the token from the header
-    :param db: AsyncSession: Access the database
+    :param db: Session: Access the database
     :return: A dictionary with the access_token, refresh_token and token type
     """
     token = credentials.credentials
@@ -142,7 +141,7 @@ async def refresh_token(
 @router.get('/confirmed_email/{token}', include_in_schema=False)
 async def confirmed_email(
         token: str,
-        db: AsyncSession = Depends(get_db)
+        db: Session = Depends(get_db)
 ) -> Any:
     """
     The confirmed_email function is used to confirm a user's email address.
@@ -152,7 +151,7 @@ async def confirmed_email(
         our database with their new status of &quot;confirmed&quot;.
 
     :param token: str: Get the token from the url
-    :param db: AsyncSession: Access the database
+    :param db: Session: Access the database
     :return: A message that the email is already confirmed
     """
     email = await AuthService.get_email_from_token(token)
@@ -173,7 +172,7 @@ async def confirmed_email(
 async def reset_password(
         body: user_schemas.EmailModel,
         background_tasks: BackgroundTasks, request: Request,
-        db: AsyncSession = Depends(get_db)
+        db: Session = Depends(get_db)
 ) -> Any:
     """
     The reset_password function is used to send an email to the user with a link that will allow them
@@ -186,7 +185,7 @@ async def reset_password(
     :param body: EmailModel: Get the email from the request body
     :param background_tasks: BackgroundTasks: Add a task to the background tasks queue
     :param request: Request: Get the base url of the website
-    :param db: AsyncSession: Access the database
+    :param db: Session: Access the database
     :return: A message and a timeout_link
     """
     user = await repository_users.get_user_by_email(body.email, db)
@@ -203,14 +202,14 @@ async def reset_password(
 async def reset_password_template(
         token: str,
         request: Request,
-        db: AsyncSession = Depends(get_db)
+        db: Session = Depends(get_db)
 ) -> Any:
     """
     The reset_password_template function is used to render the new_password.html template, which allows a user to reset their password.
 
     :param token: str: Get the token from the url
     :param request: Request: Get the request object
-    :param db: AsyncSession: Pass the database session to the function
+    :param db: Session: Pass the database session to the function
     :return: A template response object, which is a subclass of response
     """
     email = await AuthService.get_email_from_token(token)
@@ -232,7 +231,7 @@ async def reset_password_template(
 async def new_password(
         token: str,
         password: str = Form(...),
-        db: AsyncSession = Depends(get_db)
+        db: Session = Depends(get_db)
 ) -> Any:
     """
     The new_password function is used to change the password of a user.
@@ -240,7 +239,7 @@ async def new_password(
 
     :param token: str: Get the email from the token
     :param password: str: Get the password from the request body
-    :param db: AsyncSession: Get the database session from the dependency injection container
+    :param db: Session: Get the database session from the dependency injection container
     :return: A json object with a status field
     """
     email = await AuthService.get_email_from_token(token)

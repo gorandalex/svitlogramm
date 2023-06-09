@@ -8,7 +8,7 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from fastapi import HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordBearer
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 
 from svitlogram.database.connect import get_db
 from svitlogram.repository import users as repository_users
@@ -153,7 +153,7 @@ class AuthService:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Could not validate credentials')
 
     @classmethod
-    async def get_current_user(cls, token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)) -> User:
+    async def get_current_user(cls, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
         """
         The get_current_user function is a dependency that will be used in the
             UserRouter class. It takes an access token as input and returns the user
@@ -161,7 +161,7 @@ class AuthService:
 
         :param cls: Represent the class itself
         :param token: str: Get the token from the request header
-        :param db: AsyncSession: Get the database session
+        :param db: Session: Get the database session
         :return: The user object that matches the email in the jwt
         """
         credentials_exception = HTTPException(
