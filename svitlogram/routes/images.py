@@ -4,6 +4,7 @@ from typing import Optional, Any
 from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException, status, Query, Body
 from fastapi_limiter.depends import RateLimiter
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 
 from svitlogram.database.connect import get_db
 from svitlogram.database.models import User, UserRole
@@ -18,8 +19,7 @@ router = APIRouter(prefix="/images", tags=["Images"])
 
 @router.post(
     "/", response_model=ImageCreateResponse, response_model_by_alias=False, status_code=status.HTTP_201_CREATED,
-    dependencies=[Depends(RateLimiter(times=10, seconds=60))],
-    description=docs.UPLOAD_IMAGE
+    dependencies=[Depends(RateLimiter(times=10, seconds=60))]
 )
 async def upload_image(
         file: UploadFile = File(), description: str = Form(min_length=10, max_length=1200),
@@ -47,6 +47,7 @@ async def upload_image(
                             detail="Maximum five tags can be added")
 
     if tags:
+        print(tags)
         for tag in tags:
             if not 3 <= len(tag) <= 50:
                 raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -121,7 +122,7 @@ async def update_image_data(
         image_id: int = Body(ge=1),
         description: str = Body(min_length=10, max_length=1200),
         tags: Optional[list[str]] = Body(None, min_length=3, max_length=50),
-        db: AsyncSession = Depends(get_db),
+        db: Session = Depends(get_db),
         current_user: User = Depends(get_current_active_user)
 ) -> Any:
     """
@@ -155,7 +156,7 @@ async def update_image_data(
                dependencies=[Depends(RateLimiter(times=10, seconds=60))])
 async def delete_image(
         image_id: int,
-        db: AsyncSession = Depends(get_db),
+        db: Session = Depends(get_db),
         current_user: User = Depends(get_current_active_user)
 ) -> Any:
     """

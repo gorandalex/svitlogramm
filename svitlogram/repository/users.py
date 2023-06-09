@@ -71,7 +71,7 @@ async def get_user_by_username(username: str, db: Session) -> Optional[User]:
     return db.query(User).filter(User.username == username).first()
 
 
-async def get_user_by_id(user_id: int, db: Session) -> Optional[User]:
+async def get_user_by_id(user_id: int, db: Session) -> User | None:
     """
     The get_user_by_id function returns a user object from the database.
 
@@ -79,7 +79,7 @@ async def get_user_by_id(user_id: int, db: Session) -> Optional[User]:
     :param db: AsyncSession: Pass the database session to the function
     :return: A single user object
     """
-    return db.query(User).filter(User.user_id == user_id).first()
+    return db.query(User).filter(User.id == user_id).first()
 
 
 async def update_token(user: User, token: Optional[str], db: Session) -> None:
@@ -118,7 +118,7 @@ async def update_avatar(user_id: int, url: str, db: AsyncSession) -> User:
     return user
 
 
-async def update_password(user_id: int, password: str, db: AsyncSession) -> User:
+async def update_password(user_id: int, password: str, db: Session) -> User:
     """
     The update_password function updates the password of a user.
 
@@ -127,15 +127,12 @@ async def update_password(user_id: int, password: str, db: AsyncSession) -> User
     :param db: AsyncSession: Pass the database session to the function
     :return: A user object, which is the updated user
     """
-    user = await db.scalar(
-        update(User)
-        .values(password=password)
-        .filter(User.id == user_id)
-        .returning(User)
-    )
-    await db.commit()
 
-    await db.refresh(user)
+    user = await get_user_by_id(user_id, db)
+    user.password = password
+
+    db.commit()
+    db.refresh(user)
 
     return user
 

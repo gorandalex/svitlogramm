@@ -106,9 +106,7 @@ async def update_password(
     """
     if not AuthService.verify_password(body.old_password, current_user.password):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid old password")
-
     password = AuthService.get_password_hash(body.new_password)
-
     return await repository_users.update_password(current_user.id, password, db)
 
 

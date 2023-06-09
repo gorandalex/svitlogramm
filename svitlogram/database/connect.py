@@ -7,7 +7,7 @@ from config import settings
 
 DATABASE_URL = settings.DATABASE_URL
 
-engine = create_engine(DATABASE_URL, max_overflow=5)  #  echo=True,
+engine = create_engine(DATABASE_URL, echo=True, max_overflow=5)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
