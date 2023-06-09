@@ -24,7 +24,7 @@ router = APIRouter(prefix="/images", tags=["Images"])
 async def upload_image(
         file: UploadFile = File(), description: str = Form(min_length=10, max_length=1200),
         tags: Optional[list[str]] = Form(None),
-        db: AsyncSession = Depends(get_db),
+        db: Session = Depends(get_db),
         current_user: User = Depends(get_current_active_user),
 ) -> Any:
     """

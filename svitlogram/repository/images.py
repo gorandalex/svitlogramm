@@ -39,7 +39,7 @@ async def create_image(user_id: int, description: str, tags: list[str], public_i
     )
 
     if tags:
-        image.tags = await get_or_create_tags(tags, db)
+        image.tags = get_or_create_tags(tags, db)
 
     db.add(image)
 
