@@ -1,7 +1,7 @@
 import enum
 
 from datetime import datetime
-# from enum import StrEnum
+from strenum import StrEnum
 from typing import Optional
 
 from pydantic import EmailStr, constr
@@ -50,7 +50,7 @@ class EmailModel(CoreModel):
     email: EmailStr
 
 
-class ChangeRoleEnum(enum.Enum):
+class ChangeRoleEnum(StrEnum):
     user = UserRole.user
     moderator = UserRole.moderator
 

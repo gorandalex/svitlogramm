@@ -123,7 +123,6 @@ async def update_password(user_id: int, password: str, db: Session) -> User:
     :return: A user object, which is the updated user
     """
 
-
     user = await get_user_by_id(user_id, db)
     user.password = password
 
