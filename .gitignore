@@ -1,2 +1,16 @@
 *.pyc
 /.idea
+/poetry.lock
+/__pycache__
+/migrations/__pycache__
+/migrations/versions/__pycache__
+/postgres-data
+/svitlogram/__pycache__
+/svitlogram/database/__pycache__
+/svitlogram/database/models/__pycache__
+/svitlogram/repository/__pycache__
+/svitlogram/routes/__pycache__
+/svitlogram/schemas/__pycache__
+/svitlogram/services/__pycache__
+/svitlogram/utils/__pycache__
+/svitlogram/routes/docs/__pycache__
