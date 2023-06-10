@@ -48,7 +48,8 @@ async def signup(
     body.password = AuthService.get_password_hash(body.password)
     new_user = await repository_users.create_user(body, db)
 
-    background_tasks.add_task(send_email_confirmed, new_user.email, new_user.username, request.base_url)
+    background_tasks.add_task(
+        send_email_confirmed, new_user.email, new_user.username, request.base_url)
 
     return {"user": new_user, "detail": "User successfully created"}
 
@@ -68,11 +69,14 @@ async def login(
     user = await repository_users.get_user_by_email(body.username, db)
 
     if user is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email")
     if not user.email_verified:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Email not confirmed")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Email not confirmed")
     if not AuthService.verify_password(body.password, user.password):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid password")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid password")
 
     # Generate JWT
     access_token = await AuthService.create_access_token(data={"sub": user.email})
@@ -127,7 +131,8 @@ async def refresh_token(
 
     if user.refresh_token != token:
         await repository_users.update_token(user, None, db)
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh token")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh token")
 
     # Generate JWT
     access_token = await AuthService.create_access_token(data={"sub": email})
@@ -158,7 +163,8 @@ async def confirmed_email(
     user = await repository_users.get_user_by_email(email, db)
 
     if user is None:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Verification error")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Verification error")
 
     if user.email_verified:
         return {"message": "Your email is already confirmed"}
@@ -191,9 +197,11 @@ async def reset_password(
     user = await repository_users.get_user_by_email(body.email, db)
 
     if user is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email")
 
-    background_tasks.add_task(send_email_reset_password, user.email, user.username, request.base_url)
+    background_tasks.add_task(
+        send_email_reset_password, user.email, user.username, request.base_url)
 
     return {"message": "Password reset email sent", "timeout_link": {"seconds": 86_400}}
 
@@ -215,14 +223,17 @@ async def reset_password_template(
     email = await AuthService.get_email_from_token(token)
 
     if await AuthService.token_is_blacklist(email, token):
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="The link is no longer active")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail="The link is no longer active")
 
     user = await repository_users.get_user_by_email(email, db)
 
     if user is None:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Verification error")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Verification error")
     if not user.email_verified:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Email not confirmed")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Email not confirmed")
 
     return Template.html_response.TemplateResponse("new_password.html", {"request": request})
 
@@ -246,9 +257,11 @@ async def new_password(
     user = await repository_users.get_user_by_email(email, db)
 
     if user is None:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Verification error")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Verification error")
     if not user.email_verified:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Email not confirmed")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Email not confirmed")
 
     password = AuthService.get_password_hash(password)
     await repository_users.update_password(user.id, password, db)
