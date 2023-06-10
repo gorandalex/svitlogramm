@@ -1,4 +1,5 @@
 import asyncio
+import json
 from typing import Optional, Any
 
 from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException, status, Query, Body
@@ -8,7 +9,7 @@ from sqlalchemy.orm import Session
 
 from svitlogram.database.connect import get_db
 from svitlogram.database.models import User, UserRole
-from svitlogram.repository import images as repository_images
+from svitlogram.repository import images as repository_images, tags as repository_tags
 from svitlogram.schemas.image import ImageCreateResponse, ImagePublic, ImageRemoveResponse
 from svitlogram.services import cloudinary
 from svitlogram.services.auth import get_current_active_user
@@ -24,6 +25,7 @@ router = APIRouter(prefix="/images", tags=["Images"])
 async def upload_image(
         file: UploadFile = File(), description: str = Form(min_length=10, max_length=1200),
         tags: Optional[list[str]] = Form(None),
+        # tags = Form(None),
         db: Session = Depends(get_db),
         current_user: User = Depends(get_current_active_user),
 ) -> Any:
@@ -42,6 +44,13 @@ async def upload_image(
     :param : Get the image id from the url
     :return: A dictionary with the image and detail keys
     """
+    # try:
+    #     tags = {tag.strip() for tag in tags.split(',')}
+    # except:
+    #     ...
+    
+    tags = repository_tags.get_list_tags(tags)
+
     if tags and len(tags) > 5:
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                             detail="Maximum five tags can be added")
