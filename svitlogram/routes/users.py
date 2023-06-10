@@ -131,6 +131,7 @@ async def change_user_role(
     :return: A dictionary with the user_id and role
     """
     user = await repository_users.get_user_by_id(body.user_id, db)
+    print(user)
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     if user.role == body.role:
