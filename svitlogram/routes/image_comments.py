@@ -2,7 +2,7 @@ from typing import List, Optional, Any
 
 from fastapi import APIRouter, HTTPException, Depends, status
 from fastapi_limiter.depends import RateLimiter
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 
 from svitlogram.database.connect import get_db
 from svitlogram.database.models import UserRole, User
@@ -19,14 +19,14 @@ router = APIRouter(prefix='/images/comments', tags=["Image comments"])
 @router.post("/", response_model=CommentPublic, status_code=status.HTTP_201_CREATED)
 async def create_comment(
         body: CommentBase,
-        db: AsyncSession = Depends(get_db),
+        db: Session = Depends(get_db),
         current_user: User = Depends(get_current_active_user)
 ) -> Any:
     """
     The create_comment function creates a new comment in the database.
 
     :param body: CommentBase: Get the body of the comment
-    :param db: AsyncSession: Pass the database session to the repository
+    :param db: Session: Pass the database session to the repository
     :param current_user: User: Get the user who is currently logged in
     :return: A comment object
     """
@@ -49,7 +49,7 @@ async def get_comments_by_image_or_user_id(
         image_id: Optional[int] = None,
         user_id: Optional[int] = None,
         skip: int = 0,
-        limit: int = 10, db: AsyncSession = Depends(get_db),
+        limit: int = 10, db: Session = Depends(get_db),
         current_user: User = Depends(get_current_active_user)
 ) -> Any:
     """
@@ -62,7 +62,7 @@ async def get_comments_by_image_or_user_id(
     :param user_id: Optional[int]: Specify the user_id of the comment to be deleted
     :param skip: int: Skip the first n comments
     :param limit: int: Limit the number of comments that are returned
-    :param db: AsyncSession: Get the database connection
+    :param db: Session: Get the database connection
     :param current_user: User: Get the current user from the database
     :return: A list of comments
     """
@@ -78,14 +78,14 @@ async def get_comments_by_image_or_user_id(
 @router.get("/{comment_id}", response_model=CommentPublic)
 async def get_comment(
         comment_id: int,
-        db: AsyncSession = Depends(get_db),
+        db: Session = Depends(get_db),
         current_user: User = Depends(get_current_active_user)
 ) -> Any:
     """
     The get_comment function returns a comment by its id.
 
     :param comment_id: int: Get the comment id from the url path
-    :param db: AsyncSession: Get the database session
+    :param db: Session: Get the database session
     :param current_user: User: Get the current user from the database
     :return: A comment object
     """
@@ -102,7 +102,7 @@ async def get_comment(
             dependencies=[Depends(UserRoleFilter(role=UserRole.moderator))])
 async def update_comment(
         body: CommentUpdate,
-        db: AsyncSession = Depends(get_db),
+        db: Session = Depends(get_db),
         current_user: User = Depends(get_current_active_user)
 ) -> Any:
     """
@@ -111,7 +111,7 @@ async def update_comment(
         the new values for each field.
 
     :param body: CommentUpdate: Pass the new comment body to the function
-    :param db: AsyncSession: Pass the database session to the function
+    :param db: Session: Pass the database session to the function
     :param current_user: User: Get the current user from the database
     :return: The updated comment
     """
@@ -126,7 +126,7 @@ async def update_comment(
 @router.delete('/{comment_id}', dependencies=[Depends(UserRoleFilter(UserRole.moderator))])
 async def remove_comment(
         comment_id: int,
-        db: AsyncSession = Depends(get_db),
+        db: Session = Depends(get_db),
         current_user: User = Depends(get_current_active_user)
 ) -> Any:
     """
@@ -135,7 +135,7 @@ async def remove_comment(
         and returns a dictionary containing information about that comment.
 
     :param comment_id: int: Specify the id of the comment that is to be deleted
-    :param db: AsyncSession: Pass the database session to the function
+    :param db: Session: Pass the database session to the function
     :param current_user: User: Get the user that is currently logged in
     :return: A comment
     """

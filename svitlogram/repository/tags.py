@@ -74,13 +74,14 @@ async def get_or_create_tags(values: list[str], db: Session) -> list[Tag]:
             if value == tag.name:
                 break
         else:
-            new_tags.append(Tag(name=value.strip()))
+            new_tags.append(Tag(name=value.strip()))  
+             
+    if new_tags:
+        db.add_all(new_tags)
 
-    db.add_all(new_tags)
-
-    db.commit()
-    for new_tag in new_tags:
-        db.refresh(new_tag)
+        db.commit()
+        for new_tag in new_tags:
+            db.refresh(new_tag)
 
     tags.extend(new_tags)
 
@@ -121,3 +122,13 @@ async def remove_tag(tag_id: int, db: Session) -> Optional[Tag]:
         db.commit()
 
     return tag
+
+def get_list_tags(tags) -> list[str]:
+    set_tags = set()
+    if isinstance(tags, list):
+        for tag in tags:
+            set_tags.update({_tag.strip() for _tag in tag.split(',')})
+    elif isinstance(tags, str):
+        set_tags = {tag.strip() for tag in tags.split(',')}
+    
+    return list(set_tags)

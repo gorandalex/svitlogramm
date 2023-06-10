@@ -123,7 +123,6 @@ async def update_password(user_id: int, password: str, db: Session) -> User:
     :return: A user object, which is the updated user
     """
 
-
     user = await get_user_by_id(user_id, db)
     user.password = password
 
@@ -205,7 +204,7 @@ async def user_update_role(user: User, role: UserRole, db: Session) -> User:
     :param db: Session: Pass in the database session to the function
     :return: The updated user object
     """
-    user.role = role
+    user.role = role.value
     db.commit()
     db.refresh(user)
 
