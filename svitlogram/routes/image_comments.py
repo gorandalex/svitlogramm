@@ -97,9 +97,7 @@ async def get_comment(
     return comment
 
 
-# TODO лише модератор може редагувати комантар, чи власник також?
-@router.put("/", response_model=CommentPublic,
-            dependencies=[Depends(UserRoleFilter(role=UserRole.moderator))])
+@router.put("/", response_model=CommentPublic)
 async def update_comment(
         body: CommentUpdate,
         db: Session = Depends(get_db),
@@ -119,6 +117,9 @@ async def update_comment(
 
     if comment is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="ImageComment not found")
+
+    if comment.user_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Comment update is allowed only for user that create comment")
 
     return comment
 
