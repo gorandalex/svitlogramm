@@ -205,7 +205,7 @@ async def user_update_role(user: User, role: UserRole, db: Session) -> User:
     :param db: Session: Pass in the database session to the function
     :return: The updated user object
     """
-    user.role = role
+    user.role = role.value
     db.commit()
     db.refresh(user)
 

@@ -2,7 +2,7 @@ import asyncio
 from typing import Any
 
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, status, Security
-from fastapi.security import HTTPAuthorizationCredentials,HTTPBearer
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi_limiter.depends import RateLimiter
 from sqlalchemy.orm import Session
 
@@ -20,10 +20,16 @@ from config import settings
 router = APIRouter(prefix="/users", tags=["Users"])
 security = HTTPBearer()
 
-@router.get("/me/", response_model=user_schemas.UserPublic, dependencies=[Depends(RateLimiter(times=30, seconds=60))])
+@router.get(
+    "/me/",
+    response_model=user_schemas.UserPublic,
+    dependencies=[
+        Depends(RateLimiter(times=30, seconds=60)),
+        Depends(HTTPBearer())
+    ]
+)
 async def get_me(
-        current_user: User = Depends(get_current_active_user),
-        credentials: HTTPAuthorizationCredentials = Security(security)
+        current_user: User = Depends(get_current_active_user)
 ) -> Any:
     """
     The get_me function returns the current user.
@@ -115,12 +121,14 @@ async def update_password(
 @router.post(
     "/change-role",
     response_model=user_schemas.UserPublic,
-    dependencies=[Depends(UserRoleFilter(UserRole.admin))]
+    dependencies=[
+        Depends(UserRoleFilter(UserRole.admin)),
+        Depends(HTTPBearer())
+    ]
 )
 async def change_user_role(
         body: user_schemas.ChangeRole,
-        db: Session = Depends(get_db),
-        current_user: User = Depends(get_current_active_user)
+        db: Session = Depends(get_db)
 ) -> Any:
     """
     The change_user_role function is used to change the role of a user.
