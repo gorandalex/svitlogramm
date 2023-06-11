@@ -127,7 +127,7 @@ def get_list_tags(tags) -> list[str]:
     set_tags = set()
     if isinstance(tags, list):
         for tag in tags:
-            set_tags.update({_tag.strip() for _tag in tag.split(',')})
+            set_tags.update({_tag.strip() for _tag in tag.split(',') if tag.strip()})
     elif isinstance(tags, str):
         set_tags = {tag.strip() for tag in tags.split(',')}
     

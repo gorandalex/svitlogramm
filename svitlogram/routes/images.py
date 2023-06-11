@@ -1,5 +1,5 @@
 import asyncio
-import json
+import mimetypes
 from typing import Optional, Any
 
 from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException, status, Query, Body
@@ -17,18 +17,62 @@ from .docs import images as docs
 
 router = APIRouter(prefix="/images", tags=["Images"])
 
+allowed_content_types_upload = [
+    ".ai",
+    ".gif",
+    ".png",
+    ".webp",
+    ".avif",
+    ".bmp",
+    ".bw",
+    ".dng",
+    ".ps",
+    ".ept",
+    ".eps",
+    ".eps3",
+    ".fbx",
+    ".flif",
+    ".glb",
+    ".gltf",
+    ".heif",
+    ".heic",
+    ".ico",
+    ".indd",
+    ".jpg",
+    ".jpe",
+    ".jpeg",
+    ".jp2",
+    ".wdp",
+    ".jxr",
+    ".hdp",
+    ".obj",
+    ".pdf",
+    ".ply",
+    ".png",
+    ".psd",
+    ".arw",
+    ".cr2",
+    ".svg",
+    ".tga",
+    ".tif",
+    ".tiff",
+    ".u3ma",
+    ".usdz",
+    ".webp",
+    ]
 
 @router.post(
     "/", response_model=ImageCreateResponse, response_model_by_alias=False, status_code=status.HTTP_201_CREATED,
     dependencies=[Depends(RateLimiter(times=10, seconds=60))]
 )
 async def upload_image(
-        file: UploadFile = File(), description: str = Form(min_length=10, max_length=1200),
+        file: UploadFile = File(), 
+        description: str = Form(min_length=10, max_length=1200),
         tags: Optional[list[str]] = Form(None),
         # tags = Form(None),
         db: Session = Depends(get_db),
         current_user: User = Depends(get_current_active_user),
-) -> Any:
+) -> Any:  
     """
     The upload_image function is used to upload an image file to the cloudinary server.
     The function takes in a file, description and tags as parameters. The file parameter is of type UploadFile which
@@ -48,6 +92,10 @@ async def upload_image(
     #     tags = {tag.strip() for tag in tags.split(',')}
     # except:
     #     ...
+    
+    if mimetypes.guess_extension(file.content_type,) not in allowed_content_types_upload:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                            detail=f"Invalid file type. Only allowed {allowed_content_types_upload}.")
     
     tags = repository_tags.get_list_tags(tags)
 
