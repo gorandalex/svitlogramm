@@ -3,6 +3,7 @@ from typing import Optional
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 
 from svitlogram.database.models import ImageFormat, Image
 
@@ -34,7 +35,7 @@ async def create_image_format(user_id: int, image_id: int, format_: dict, db: As
         return
 
 
-async def get_image_formats_by_image_id(user_id: int, image_id: int, db: AsyncSession) -> list[Image]:
+async def get_image_formats_by_image_id(user_id: int, image_id: int, db: Session) -> list[Image]:
     """
     The get_image_formats_by_image_id function returns a list of ImageFormat objects that are associated with the
     image_id parameter. The user_id parameter is used to ensure that only images belonging to the user are returned.
@@ -44,7 +45,7 @@ async def get_image_formats_by_image_id(user_id: int, image_id: int, db: AsyncSe
     :param db: AsyncSession: Pass the database session to the function
     :return: A list of image format objects
     """
-    images = await db.scalars(
+    images = db.scalars(
         select(ImageFormat)
         .filter(ImageFormat.image_id == image_id, ImageFormat.user_id == user_id)
     )
