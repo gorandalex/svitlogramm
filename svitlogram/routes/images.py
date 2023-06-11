@@ -23,6 +23,7 @@ allowed_content_types_upload = [
     ".png",
     ".webp",
     ".avif",
+    ".jfif",
     ".bmp",
     ".bw",
     ".dng",
