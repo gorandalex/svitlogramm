@@ -19,8 +19,8 @@ async def create_rating(user_id: int, rating: int, image_id: int, db: AsyncSessi
     rating = ImageRating(rating=rating, image_id=image_id, user_id=user_id)
 
     db.add(rating)
-    await db.commit()
-    await db.refresh(rating)
+    db.commit()
+    db.refresh(rating)
 
     return rating
 
@@ -33,7 +33,7 @@ async def get_all_image_ratings(image_id: int, db: AsyncSession) -> list[ImageRa
     :param db: AsyncSession: Pass in the database session
     :return: A list of dictionaries
     """
-    ratings = await db.scalars(
+    ratings = db.scalars(
         select(ImageRating)
         .filter(ImageRating.image_id == image_id)
     )
@@ -50,7 +50,7 @@ async def get_rating_by_id(rating_id: int, db: AsyncSession) -> Optional[ImageRa
     :param db: AsyncSession: Pass the database connection to the function
     :return: A rating object from the database
     """
-    return await db.scalar(
+    return db.scalar(
         select(ImageRating)
         .filter(ImageRating.id == rating_id)
     )
@@ -65,7 +65,7 @@ async def get_rating_by_image_id_and_user(user_id: int, image_id: int, db: Async
     :param db: AsyncSession: Pass in the database session
     :return: The rating of the user for the image with id = image_id
     """
-    return await db.scalar(
+    return db.scalar(
         select(ImageRating)
         .filter(and_(ImageRating.image_id == image_id, ImageRating.user_id == user_id))
     )
@@ -79,8 +79,8 @@ async def remove_rating(rating: ImageRating, db: AsyncSession) -> None:
     :param db: AsyncSession: Pass the database session to the function
     :return: None
     """
-    await db.delete(rating)
-    await db.commit()
+    db.delete(rating)
+    db.commit()
 
 
 async def update_rating(rating: ImageRating, new_rating: int, db: AsyncSession) -> ImageRating:
@@ -93,8 +93,8 @@ async def update_rating(rating: ImageRating, new_rating: int, db: AsyncSession) 
     :return: The new rating
     """
     rating.rating = new_rating
-    await db.commit()
+    db.commit()
 
-    await db.refresh(rating)
+    db.refresh(rating)
 
     return rating
