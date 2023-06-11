@@ -12,7 +12,6 @@ from svitlogram.repository import images as repository_images
 from svitlogram.utils.filters import UserRoleFilter
 from svitlogram.services.auth import get_current_active_user
 
-
 router = APIRouter(prefix='/images/comments', tags=["Image comments"])
 
 
@@ -119,7 +118,8 @@ async def update_comment(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="ImageComment not found")
 
     if comment.user_id != current_user.id:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Comment update is allowed only for user that create comment")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail="Comment update is allowed only for user that create comment")
 
     return comment
 
