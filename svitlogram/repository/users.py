@@ -143,7 +143,7 @@ async def update_email(user_id: int, email: str, db: Session) -> Optional[User]:
     :return: The updated user object
     """
     try:
-        user = await db.scalar(
+        user = db.scalar(
             update(User)
             .values(email=email)
             .filter(User.id == user_id)

@@ -24,7 +24,13 @@ qrcode = "^7.4.2"
 python-multipart = "^0.0.6"
 bcrypt = "^4.0.1"
 strenum = "^0.4.10"
+pytest = "^7.3.2"
+pytest-cov = "^4.1.0"
+pytest-mock = "^3.10.0"
 
+
+[tool.poetry.group.test.dependencies]
+httpx = "^0.24.1"
 
 [build-system]
 requires = ["poetry-core"]
