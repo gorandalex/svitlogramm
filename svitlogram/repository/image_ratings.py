@@ -1,12 +1,12 @@
 from typing import Optional
 
 from sqlalchemy import select, and_
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 
 from svitlogram.database.models.image_raiting import ImageRating
 
 
-async def create_rating(user_id: int, rating: int, image_id: int, db: AsyncSession) -> ImageRating:
+async def create_rating(user_id: int, rating: int, image_id: int, db: Session) -> ImageRating:
     """
     The create function creates a new ImageRating object and adds it to the database.
 
@@ -25,7 +25,7 @@ async def create_rating(user_id: int, rating: int, image_id: int, db: AsyncSessi
     return rating
 
 
-async def get_all_image_ratings(image_id: int, db: AsyncSession) -> list[ImageRating]:
+async def get_all_image_ratings(image_id: int, db: Session) -> list[ImageRating]:
     """
     The get_all_ratings function returns all ratings for a given image.
 
@@ -41,7 +41,7 @@ async def get_all_image_ratings(image_id: int, db: AsyncSession) -> list[ImageRa
     return ratings.all()  # noqa
 
 
-async def get_rating_by_id(rating_id: int, db: AsyncSession) -> Optional[ImageRating]:
+async def get_rating_by_id(rating_id: int, db: Session) -> Optional[ImageRating]:
     """
     The get_rating_by_id function takes in a rating_id and an AsyncSession object.
     It then queries the database for the ImageRating with that id, and returns it.
@@ -56,7 +56,7 @@ async def get_rating_by_id(rating_id: int, db: AsyncSession) -> Optional[ImageRa
     )
 
 
-async def get_rating_by_image_id_and_user(user_id: int, image_id: int, db: AsyncSession) -> Optional[ImageRating]:
+async def get_rating_by_image_id_and_user(user_id: int, image_id: int, db: Session) -> Optional[ImageRating]:
     """
     The get_rating_by_user_id_and_image_id function returns the rating of an image by a user.
 
@@ -71,7 +71,7 @@ async def get_rating_by_image_id_and_user(user_id: int, image_id: int, db: Async
     )
 
 
-async def remove_rating(rating: ImageRating, db: AsyncSession) -> None:
+async def remove_rating(rating: ImageRating, db: Session) -> None:
     """
     The remove_rating function removes a rating from the database.
 
@@ -83,7 +83,7 @@ async def remove_rating(rating: ImageRating, db: AsyncSession) -> None:
     db.commit()
 
 
-async def update_rating(rating: ImageRating, new_rating: int, db: AsyncSession) -> ImageRating:
+async def update_rating(rating: ImageRating, new_rating: int, db: Session) -> ImageRating:
     """
     The update_rating function updates the rating of an image.
 
