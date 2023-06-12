@@ -1,6 +1,6 @@
 from typing import Optional
 
-from sqlalchemy.ext.asyncio import AsyncSession
+
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
@@ -8,16 +8,16 @@ from svitlogram.database.models import Tag
 from svitlogram.schemas.tag import TagBase
 
 
-async def get_tags(skip: int, limit: int, db: AsyncSession) -> list[Tag]:
+async def get_tags(skip: int, limit: int, db: Session) -> list[Tag]:
     """
     The get_tags function returns a list of tags.
 
     :param skip: int: Skip a number of records
     :param limit: int: Limit the number of tags returned
-    :param db: AsyncSession: Pass the database session to the function
+    :param db: Session: Pass the database session to the function
     :return: A list of tag objects
     """
-    tags = await db.scalars(
+    tags = db.scalars(
         select(Tag)
         .offset(skip)
         .limit(limit)
@@ -28,11 +28,11 @@ async def get_tags(skip: int, limit: int, db: AsyncSession) -> list[Tag]:
 
 async def get_tags_by_list_values(values: list[str], db: Session) -> list[Tag]:
     """
-    The get_tags_by_list_values function takes a list of strings and an AsyncSession object as arguments.
+    The get_tags_by_list_values function takes a list of strings and a Session object as arguments.
     It returns a list of Tag objects that match the names in the values argument.
 
     :param values: list[str]: Pass in a list of strings to the function
-    :param db: AsyncSession: Pass in the database session
+    :param db: Session: Pass in the database session
     :return: A list of tag objects
     """
     tags = db.scalars(
@@ -42,15 +42,15 @@ async def get_tags_by_list_values(values: list[str], db: Session) -> list[Tag]:
     return tags.all()  # noqa
 
 
-async def get_tag_by_id(tag_id: int, db: AsyncSession) -> Optional[Tag]:
+async def get_tag_by_id(tag_id: int, db: Session) -> Optional[Tag]:
     """
     The get_tag_by_id function returns a Tag object from the database.
 
     :param tag_id: int: Specify the id of the tag to be retrieved
-    :param db: AsyncSession: Pass the database session to the function
+    :param db: Session: Pass the database session to the function
     :return: A tag object or none
     """
-    return await db.scalar(
+    return db.scalar(
         select(Tag)
         .filter(Tag.id == tag_id)
     )
@@ -58,12 +58,12 @@ async def get_tag_by_id(tag_id: int, db: AsyncSession) -> Optional[Tag]:
 
 async def get_or_create_tags(values: list[str], db: Session) -> list[Tag]:
     """
-    The get_or_create_tags function takes a list of strings and an async database session.
+    The get_or_create_tags function takes a list of strings and  database session.
     It returns a list of Tag objects.
     If the tag already exists in the database, it is returned as-is. If not, it is created and then returned.
 
     :param values: list[str]: Pass in a list of strings
-    :param db: AsyncSession: Pass the database session to the function
+    :param db: Session: Pass the database session to the function
     :return: A list of tag objects
     """
     tags = await get_tags_by_list_values(values, db)
@@ -94,7 +94,7 @@ async def update_tag(tag_id: int, body: TagBase, db: Session) -> Optional[Tag]:
 
     :param tag_id: int: Specify the id of the tag to be deleted
     :param body: TagBase: Pass in the new name of the tag
-    :param db: AsyncSession: Pass a database session to the function
+    :param db: Session: Pass a database session to the function
     :return: The updated tag if found, otherwise none
     """
     tag = await get_tag_by_id(tag_id, db)
@@ -112,7 +112,7 @@ async def remove_tag(tag_id: int, db: Session) -> Optional[Tag]:
     The remove_tag function removes a tag from the database.
 
     :param tag_id: int: Specify the id of the tag to remove
-    :param db: AsyncSession: Pass in the database session
+    :param db: Session: Pass in the database session
     :return: The tag that was removed, or none if the tag wasn't found
     """
     tag = await get_tag_by_id(tag_id, db)
