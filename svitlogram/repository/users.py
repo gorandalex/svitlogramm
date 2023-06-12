@@ -10,7 +10,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from svitlogram.database.models import User, UserRole, Image
 from svitlogram.schemas.user import UserCreate, ProfileUpdate
-from svitlogram.services.gravatar import get_gravatar
 
 
 async def create_user(body: UserCreate, db: Session) -> User:
