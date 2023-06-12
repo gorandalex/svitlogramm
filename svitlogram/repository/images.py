@@ -156,3 +156,13 @@ async def get_images(
     image = db.scalars(query)
 
     return image.unique().all()  # noqa
+
+
+async def get_image_rating(image: Image, db: Session) -> float:
+    average_rating = (
+        db.query(func.coalesce(func.avg(ImageRating.rating), 0))
+        .filter(ImageRating.image_id == image.id)
+        .scalar()
+    )
+
+    return average_rating    
