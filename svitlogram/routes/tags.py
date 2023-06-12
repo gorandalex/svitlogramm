@@ -12,7 +12,7 @@ from svitlogram.repository import tags as repository_tags
 from svitlogram.utils.filters import UserRoleFilter
 from svitlogram.services.auth import get_current_active_user
 
-router = APIRouter(prefix='/tags', tags=["tags"])
+router = APIRouter(prefix='/tags', tags=["Tags"])
 
 
 @router.post("/", response_model=list[TagResponse])
