@@ -1,10 +1,19 @@
-from sqlalchemy import select
+import enum
+from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Session
-from svitlogram.database.models import Image, Tag
+from sqlalchemy.orm import Session, aliased
+from svitlogram.database.models import Image, Tag, ImageRating
 from typing import Optional
 
 from .tags import get_or_create_tags
+
+class SortMode(enum.Enum):
+
+    NOT_SORT = 'not_sort'
+    RAITING = 'average_rating'
+    RAITING_DESC = 'average_rating_desc'
+    DATE = 'date_added'
+    DATE_DESC = 'date_added_desc'
 
 
 async def get_image_by_id(image_id: int, db: Session) -> Image:
@@ -91,6 +100,7 @@ async def get_images(
         tags: list[str],
         image_id: int,
         user_id: int,
+        sort_by: SortMode,
         db: Session
 ) -> list[Image]:
     """
@@ -121,7 +131,28 @@ async def get_images(
         query = query.filter(Image.user_id == user_id)
     if image_id:
         query = query.filter(Image.id == image_id)
+        
+    if sort_by == SortMode.RAITING:  # Сортировка по средней оценке
+        subquery = (
+            db.query(Image.id, func.coalesce(func.avg(ImageRating.rating), 0).label("average_rating"))
+            .outerjoin(ImageRating, ImageRating.image_id == Image.id)
+            .group_by(Image.id)
+            .subquery()
+        )
+        query = query.join(subquery, Image.id == subquery.c.id).order_by(subquery.c.average_rating.asc())
+    elif sort_by == SortMode.RAITING_DESC:  # Сортировка по средней оценке
+        subquery = (
+            db.query(Image.id, func.coalesce(func.avg(ImageRating.rating), 0).label("average_rating"))
+            .outerjoin(ImageRating, ImageRating.image_id == Image.id)
+            .group_by(Image.id)
+            .subquery()
+        )
+        query = query.join(subquery, Image.id == subquery.c.id).order_by(subquery.c.average_rating.desc())
+    elif sort_by == SortMode.DATE:  # Сортировка по дате добавления
+        query = query.order_by(Image.created_at.asc())
+    elif sort_by == SortMode.DATE_DESC:  # Сортировка по дате добавления
+        query = query.order_by(Image.created_at.desc())
 
-    image = db.scalars(query.offset(skip).limit(limit))
+    image = db.scalars(query)
 
     return image.unique().all()  # noqa
