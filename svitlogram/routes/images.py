@@ -62,6 +62,7 @@ allowed_content_types_upload = [
     ".webp",
     ]
 
+
 @router.post(
     "/", response_model=ImageCreateResponse, response_model_by_alias=False, status_code=status.HTTP_201_CREATED,
     dependencies=[Depends(RateLimiter(times=10, seconds=60))]
@@ -123,7 +124,7 @@ async def upload_image(
 
 
 @router.get("/", response_model=list[ImagePublic], description="Get all images",
-            dependencies=[Depends(RateLimiter(times=30, seconds=60))])
+            dependencies=[Depends(RateLimiter(times=300, seconds=60))])
 async def get_images(
         skip: int = 0,
         limit: int = Query(default=10, ge=1, le=100),
@@ -131,7 +132,7 @@ async def get_images(
         tags: Optional[list[str]] = Query(default=None, max_length=50),
         image_id: Optional[int] = Query(default=None, ge=1),
         user_id: Optional[int] = Query(default=None, ge=1),
-        db: AsyncSession = Depends(get_db),
+        db: Session = Depends(get_db),
         current_user: User = Depends(get_current_active_user)
 ) -> Any:
     """
@@ -157,7 +158,7 @@ async def get_images(
 @router.get("/{image_id}", response_model=ImagePublic)
 async def get_image(
         image_id: int,
-        db: AsyncSession = Depends(get_db),
+        db: Session = Depends(get_db),
         current_user: User = Depends(get_current_active_user)
 ) -> Any:
     """
