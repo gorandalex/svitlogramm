@@ -24,8 +24,8 @@ async def create_image_rating(
 
     :param body: ImageRatingCreate: Get the rating and image_id from the request body
     :param current_user: User: Get the user that is currently logged in
-    :param db: AsyncSession: Get the database session
-    :return: An async session object
+    :param db: Session: Get the database session
+    :return: An session object
     """
     if not 1 <= body.rating <= 5:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Maximum rating is 5, minimum rating 0")
@@ -53,7 +53,7 @@ async def update_image_rating(
     The update_image_rating function updates the rating of an image.
 
     :param body: ImageRatingUpdate: Get the rating from the request body
-    :param db: AsyncSession: Get the database session
+    :param db: Session: Get the database session
     :param current_user: User: Get the user who is currently logged in
     :return: An image rating object
     """
@@ -103,7 +103,7 @@ async def get_all_image_ratings(
         The function takes in an image_id and returns the list of ratings associated with that id.
 
     :param image_id: int: Get the image id from the url
-    :param db: AsyncSession: Get the database session from the dependency injection container
+    :param db: Session: Get the database session from the dependency injection container
     :param current_user: User: Get the current user who is logged in
     :return: A list of all ratings for a given image
     """

@@ -1,5 +1,5 @@
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
+
 from sqlalchemy.orm import Session
 from svitlogram.database.models import Image, Tag
 from typing import Optional
@@ -12,7 +12,7 @@ async def get_image_by_id(image_id: int, db: Session) -> Image:
     The get_image_by_id function returns an image from the database.
 
     :param image_id: int: Filter the images by id
-    :param db: AsyncSession: Pass in the database session to use
+    :param db: Session: Pass in the database session to use
     :return: A single image object
     """
     return db.scalar(
@@ -29,7 +29,7 @@ async def create_image(user_id: int, description: str, tags: list[str], public_i
     :param description: str: Describe the image
     :param tags: list[str]: Specify that the tags parameter is a list of strings
     :param public_id: str: Store the public id of the image in cloudinary
-    :param db: AsyncSession: Pass in the database session
+    :param db: Session: Pass in the database session
     :return: An image object
     """
     image = Image(
@@ -57,7 +57,7 @@ async def update_description(image_id: int, description: str, tags: list[str], d
     :param image_id: int: Specify the image to update
     :param description: str: Update the description of an image
     :param tags: list[str]: Pass in a list of tags
-    :param db: AsyncSession: Pass in the database session
+    :param db: Session: Pass in the database session
     :return: An image object
     """
     tags = await get_or_create_tags(tags, db)
@@ -77,7 +77,7 @@ async def delete_image(image: Image, db: Session) -> None:
     The delete_image function deletes an image from the database.
 
     :param image: Image: Pass the image object to be deleted
-    :param db: AsyncSession: Pass in the database session
+    :param db: Session: Pass in the database session
     :return: None, which is the default return value for a function that doesn't explicitly return anything
     """
     db.delete(image)
@@ -107,7 +107,7 @@ async def get_images(
     :param tags: list[str]: Filter the images by tags
     :param image_id: int: Filter the images by their id
     :param user_id: int: Filter images by user_id
-    :param db: AsyncSession: Pass the database connection
+    :param db: Session: Pass the database connection
     :return: A list of image objects
     """
     query = select(Image)

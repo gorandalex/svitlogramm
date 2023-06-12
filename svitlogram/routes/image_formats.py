@@ -44,7 +44,7 @@ async def formatting_image(
 
     :param body: ImageTransformation: Get the image_id and transformation parameters
     :param current_user: User: Get the user's id
-    :param db: AsyncSession: Pass the database session to the repository layer
+    :param db: Session: Pass the database session to the repository layer
     :return: A formatted image
     """
     image = await repository_images.get_image_by_id(body.image_id, db)
