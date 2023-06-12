@@ -234,3 +234,28 @@ async def unban_user(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
     return await repository_users.user_update_is_active(user, True, db)
+
+
+@router.get("/users/with_images", response_model=list[UserPublic])
+async def get_users_with_images(
+    current_user: User = Depends(get_current_active_user),
+    skip: int = 0,
+    limit: int = None,
+    db: Session = Depends(get_db),
+):
+    """
+    Get a list of users who have uploaded images.
+
+    :param current_user: User: Get the current user from the database.
+    :param skip: int: Skip the first n records in the database.
+    :param limit: int: Limit the number of results returned.
+    :param db: Session: The database session dependency.
+
+    Returns a list of users.
+    """
+    if current_user.role == UserRole.user:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail="Access denied. Access not open to 'user' role.")
+
+    users = await repository_users.get_users_with_images(db, skip, limit)
+    return users

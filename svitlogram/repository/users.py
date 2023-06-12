@@ -3,10 +3,11 @@ import logging
 from typing import Optional
 
 from libgravatar import Gravatar
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import joinedload, Session
 from sqlalchemy import select, update, or_, func, RowMapping
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.sql import exists
 
 from svitlogram.database.models import User, UserRole, Image
 from svitlogram.schemas.user import UserCreate, ProfileUpdate
@@ -244,3 +245,19 @@ async def get_user_profile_by_username(username: str, db: Session) -> RowMapping
     )
 
     return user.mappings().first()
+
+
+async def get_users_with_images(db: Session, skip: int = 0, limit: int = None) -> list[User]:
+    """
+    Returns a list of users from the database who have images.
+
+    :param db: Session: Database session
+    :param role: UserRole: User role (admin or moderator)
+    :param skip: int: Skip the first n records in the result
+    :param limit: int: Limit the number of results returned
+    :return: List[User]: List of users with images
+    """
+    query = db.query(User).options(joinedload(User.images)).filter(exists().where(User.id == Image.user_id))
+
+    return query.offset(skip).limit(limit).all()
+ 
