@@ -131,6 +131,7 @@ async def get_images(
         tags: Optional[list[str]] = Query(default=None, max_length=50),
         image_id: Optional[int] = Query(default=None, ge=1),
         user_id: Optional[int] = Query(default=None, ge=1),
+        sort_by: Optional[repository_images.SortMode] = repository_images.SortMode.NOT_SORT,
         db: AsyncSession = Depends(get_db),
         current_user: User = Depends(get_current_active_user)
 ) -> Any:
@@ -151,7 +152,7 @@ async def get_images(
     :param current_user: User: Get the current user from the database
     :return: A list of images
     """
-    return await repository_images.get_images(skip, limit, description, tags, image_id, user_id, db)
+    return await repository_images.get_images(skip, limit, description, tags, image_id, user_id, sort_by, db)
 
 
 @router.get("/{image_id}", response_model=ImagePublic)
