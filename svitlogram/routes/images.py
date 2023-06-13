@@ -132,7 +132,7 @@ async def get_images(
         image_id: Optional[int] = Query(default=None, ge=1),
         user_id: Optional[int] = Query(default=None, ge=1),
         sort_by: Optional[repository_images.SortMode] = repository_images.SortMode.NOT_SORT,
-        db: AsyncSession = Depends(get_db),
+        db: Session = Depends(get_db),
         current_user: User = Depends(get_current_active_user)
 ) -> Any:
     """
@@ -158,7 +158,7 @@ async def get_images(
 @router.get("/{image_id}", response_model=ImagePublic)
 async def get_image(
         image_id: int,
-        db: AsyncSession = Depends(get_db),
+        db: Session = Depends(get_db),
         current_user: User = Depends(get_current_active_user)
 ) -> Any:
     """
