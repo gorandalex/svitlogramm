@@ -1,5 +1,6 @@
 import uuid
-import enum
+
+from strenum import StrEnum
 
 from typing import BinaryIO, Optional
 
@@ -17,7 +18,7 @@ cloudinary.config(
 )
 
 
-class CropMode(enum.Enum):
+class CropMode(StrEnum):
     """
     Enum representing different modes of cropping
 
@@ -44,7 +45,7 @@ class CropMode(enum.Enum):
     """Performs smart cropping, using the Imagga Crop and Scale add-on."""
 
 
-class ResizeMode(enum.Enum):
+class ResizeMode(StrEnum):
     """
     Enum representing different modes of resizing
 
@@ -73,7 +74,7 @@ class ResizeMode(enum.Enum):
     """Performs smart cropping, using the Imagga Crop and Scale add-on."""
 
 
-class GravityMode(enum.Enum):
+class GravityMode(StrEnum):
     """Enum representing the gravity of the cropped image"""
     CENTER = 'center'
     NORTH = 'north'
