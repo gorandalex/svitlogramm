@@ -1,7 +1,7 @@
 from typing import Any
 
 from fastapi import APIRouter, HTTPException, Depends, status, Body
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 
 from svitlogram.database.models import UserRole, User
 from svitlogram.database.connect import get_db
@@ -12,20 +12,20 @@ from svitlogram.repository import tags as repository_tags
 from svitlogram.utils.filters import UserRoleFilter
 from svitlogram.services.auth import get_current_active_user
 
-router = APIRouter(prefix='/tags', tags=["tags"])
+router = APIRouter(prefix='/tags', tags=["Tags"])
 
 
 @router.post("/", response_model=list[TagResponse])
 async def get_or_create_tags(
         tags: list[str] = Body(min_length=3, max_length=50),
-        db: AsyncSession = Depends(get_db),
+        db: Session = Depends(get_db),
         current_user: User = Depends(get_current_active_user)
 ) -> Any:
     """
     The get_or_create_tags function is used to get or create tags.
 
     :param tags: Get the tags from the database
-    :param db: AsyncSession: Pass the database session to the function
+    :param db: Session: Pass the database session to the function
     :param current_user: User: Get the current user who is logged in
     :return: A list of tag objects
     """
@@ -37,7 +37,7 @@ async def get_or_create_tags(
 async def read_tags(
         skip: int = 0,
         limit: int = 100,
-        db: AsyncSession = Depends(get_db),
+        db: Session = Depends(get_db),
         current_user: User = Depends(get_current_active_user)
 ) -> Any:
     """
@@ -45,7 +45,7 @@ async def read_tags(
 
     :param skip: int: Skip the first n tags
     :param limit: int: Limit the number of tags returned
-    :param db: AsyncSession: Pass the database connection to the function
+    :param db: Session: Pass the database connection to the function
     :param current_user: User: Get the current user
     :return: A list of tag objects
     """
@@ -55,7 +55,7 @@ async def read_tags(
 @router.get("/{tag_id}", response_model=TagResponse)
 async def get_tag(
         tag_id: int,
-        db: AsyncSession = Depends(get_db),
+        db: Session = Depends(get_db),
         current_user: User = Depends(get_current_active_user)
 ) -> Any:
     """
@@ -63,7 +63,7 @@ async def get_tag(
     If no such tag exists, it raises an HTTP 404 error.
 
     :param tag_id: int: Get the tag id from the url
-    :param db: AsyncSession: Get the database session
+    :param db: Session: Get the database session
     :param current_user: User: Get the current user
     :return: A tag object
     """
@@ -80,7 +80,7 @@ async def get_tag(
     dependencies=[Depends(UserRoleFilter(role=UserRole.moderator))])
 async def update_tag(
         body: TagUpdate,
-        db: AsyncSession = Depends(get_db),
+        db: Session = Depends(get_db),
         current_user: User = Depends(get_current_active_user)
 ) -> Any:
     """
@@ -90,7 +90,7 @@ async def update_tag(
 
     :param body: TagBase: Define the body of the request
     :param tag_id: int: Identify the tag to be deleted
-    :param db: AsyncSession: Pass the database session to the function
+    :param db: Session: Pass the database session to the function
     :param current_user: User: Get the current user
     :return: A tag object
     """
@@ -108,14 +108,14 @@ async def update_tag(
 )
 async def remove_tag(
         tag_id: int,
-        db: AsyncSession = Depends(get_db),
+        db: Session = Depends(get_db),
         current_user: User = Depends(get_current_active_user)
 ) -> Any:
     """
     The remove_tag function removes a tag from the database.
 
     :param tag_id: int: Specify the id of the tag to be removed
-    :param db: AsyncSession: Get the database session
+    :param db: Session: Get the database session
     :param current_user: User: Get the user that is currently logged in
     :return: The tag that was just deleted
     """

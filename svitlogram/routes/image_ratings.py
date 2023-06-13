@@ -1,7 +1,7 @@
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 
 from svitlogram.database.connect import get_db
 from svitlogram.database.models import User, UserRole
@@ -17,15 +17,15 @@ router = APIRouter(prefix="/images/ratings", tags=["Image ratings"])
 async def create_image_rating(
         body: ImageRatingCreate,
         current_user: User = Depends(get_current_active_user),
-        db: AsyncSession = Depends(get_db)
-) -> AsyncSession:
+        db: Session = Depends(get_db)
+) -> Session:
     """
     The create_image_rating function creates a new image rating.
 
     :param body: ImageRatingCreate: Get the rating and image_id from the request body
     :param current_user: User: Get the user that is currently logged in
-    :param db: AsyncSession: Get the database session
-    :return: An async session object
+    :param db: Session: Get the database session
+    :return: An session object
     """
     if not 1 <= body.rating <= 5:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Maximum rating is 5, minimum rating 0")
@@ -46,14 +46,14 @@ async def create_image_rating(
 @router.put("/", response_model=ImageRatingResponse)
 async def update_image_rating(
         body: ImageRatingUpdate,
-        db: AsyncSession = Depends(get_db),
+        db: Session = Depends(get_db),
         current_user: User = Depends(get_current_active_user)
 ) -> Any:
     """
     The update_image_rating function updates the rating of an image.
 
     :param body: ImageRatingUpdate: Get the rating from the request body
-    :param db: AsyncSession: Get the database session
+    :param db: Session: Get the database session
     :param current_user: User: Get the user who is currently logged in
     :return: An image rating object
     """
@@ -71,24 +71,23 @@ async def update_image_rating(
 async def delete_image_rating(
         rating_id: int,
         current_user: User = Depends(get_current_active_user),
-        db_session=Depends(get_db)
+        db: Session = Depends(get_db)
 ):
     """
     The delete_image_rating function deletes an image rating.
 
     :param rating_id: int: Specify the id of the rating to be deleted
     :param current_user: User: Get the current user
-    :param db_session: Get the database session
+    :param db: Get the database session
     :return: A dictionary with a message
     """
-    rating = await repo_image_ratings.get_rating_by_id(rating_id, db_session)
+    rating = await repo_image_ratings.get_rating_by_id(rating_id, db)
     if not rating:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Rating not found")
-
-    if current_user.role != UserRole.admin or current_user.id == rating.user_id:
+    if current_user.role != UserRole.admin or current_user.id != rating.user_id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not enough permissions")
 
-    await repo_image_ratings.remove_rating(rating, db_session)
+    await repo_image_ratings.remove_rating(rating, db)
 
     return {"message": "Rating deleted successfully"}
 
@@ -96,7 +95,7 @@ async def delete_image_rating(
 @router.get("/{image_id}/ratings")
 async def get_all_image_ratings(
         image_id: int,
-        db_session: AsyncSession = Depends(get_db),
+        db: Session = Depends(get_db),
         current_user: User = Depends(get_current_active_user)
 ) -> Any:
     """
@@ -104,11 +103,11 @@ async def get_all_image_ratings(
         The function takes in an image_id and returns the list of ratings associated with that id.
 
     :param image_id: int: Get the image id from the url
-    :param db_session: AsyncSession: Get the database session from the dependency injection container
+    :param db: Session: Get the database session from the dependency injection container
     :param current_user: User: Get the current user who is logged in
     :return: A list of all ratings for a given image
     """
-    ratings = await repo_image_ratings.get_all_image_ratings(image_id, db_session)
+    ratings = await repo_image_ratings.get_all_image_ratings(image_id, db)
 
     if not ratings:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Ratings not found")

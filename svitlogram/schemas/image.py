@@ -13,6 +13,7 @@ class ImageBase(CoreModel):
     description: str
     tags: list[TagResponse]
     user_id: int
+    avg_rating: float
 
     @root_validator(pre=True)
     def update_model(cls, values: utils.GetterDict):

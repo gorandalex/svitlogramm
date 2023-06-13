@@ -10,7 +10,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from svitlogram.database.models import User, UserRole, Image
 from svitlogram.schemas.user import UserCreate, ProfileUpdate
-from svitlogram.services.gravatar import get_gravatar
 
 
 async def create_user(body: UserCreate, db: Session) -> User:
@@ -181,7 +180,7 @@ async def update_user_profile(user_id: int, body: ProfileUpdate, db: Session) ->
     """
     user_body = {key: val for key, val in body.dict().items() if val is not None}
 
-    user = await db.scalar(
+    user = db.scalar(
         update(User)
         .where(User.id == user_id)
         .values(**user_body)

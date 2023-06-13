@@ -39,5 +39,5 @@ class UserRoleFilter:
             return current_user
 
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
-                            detail=f"Access denied. Access open to \"{current_user.role}\"")
+                            detail=f"Access denied. Access not open to \"{current_user.role}\"")
     
