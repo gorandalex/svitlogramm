@@ -4,7 +4,7 @@ from typing import Optional, Any
 
 from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException, status, Query, Body
 from fastapi_limiter.depends import RateLimiter
-from sqlalchemy.ext.asyncio import AsyncSession
+
 from sqlalchemy.orm import Session
 
 from svitlogram.database.connect import get_db
@@ -84,7 +84,7 @@ async def upload_image(
     :param file: UploadFile: Receive the image file from the client
     :param description: str: Get the description of the image from the request body
     :param tags: Optional[list[str]]: Validate the tag list
-    :param db: AsyncSession: Get the database session
+    :param db: Session: Get the database session
     :param current_user: User: Get the current user that is logged in
     :param : Get the image id from the url
     :return: A dictionary with the image and detail keys
@@ -131,8 +131,11 @@ async def get_images(
         tags: Optional[list[str]] = Query(default=None, max_length=50),
         image_id: Optional[int] = Query(default=None, ge=1),
         user_id: Optional[int] = Query(default=None, ge=1),
+
         sort_by: Optional[repository_images.SortMode] = repository_images.SortMode.NOT_SORT,
-        db: AsyncSession = Depends(get_db),
+
+        db: Session = Depends(get_db),
+
         current_user: User = Depends(get_current_active_user)
 ) -> Any:
     """
@@ -148,7 +151,7 @@ async def get_images(
     :param tags: Optional[list[str]]: Filter the images by tags
     :param image_id: Optional[int]: Get the image by id
     :param user_id: Optional[int]: Filter the images by user_id
-    :param db: AsyncSession: Get the database session
+    :param db: Session: Get the database session
     :param current_user: User: Get the current user from the database
     :return: A list of images
     """
@@ -158,7 +161,7 @@ async def get_images(
 @router.get("/{image_id}", response_model=ImagePublic)
 async def get_image(
         image_id: int,
-        db: AsyncSession = Depends(get_db),
+        db: Session = Depends(get_db),
         current_user: User = Depends(get_current_active_user)
 ) -> Any:
     """
@@ -222,7 +225,7 @@ async def delete_image(
     The delete_image function deletes an image from the database and cloudinary.
 
     :param image_id: int: Get the image id from the url
-    :param db: AsyncSession: Get the database session
+    :param db: Session: Get the database session
     :param current_user: User: Get the current user
     :return: A dictionary with the message key and value
     """
