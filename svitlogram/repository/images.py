@@ -28,6 +28,7 @@ async def get_image_by_id(image_id: int, db: Session) -> Image:
         select(Image)
         .filter(Image.id == image_id)
     )
+    
 
 
 async def create_image(user_id: int, description: str, tags: list[str], public_id: str, db: Session) -> Image:
@@ -158,11 +159,3 @@ async def get_images(
     return image.unique().all()  # noqa
 
 
-async def get_image_rating(image: Image, db: Session) -> float:
-    average_rating = (
-        db.query(func.coalesce(func.avg(ImageRating.rating), 0))
-        .filter(ImageRating.image_id == image.id)
-        .scalar()
-    )
-
-    return average_rating    

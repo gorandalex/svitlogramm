@@ -1,9 +1,11 @@
 from typing import Optional
 
-from sqlalchemy import select, and_
+from sqlalchemy import select, and_, func
 from sqlalchemy.orm import Session
 
 from svitlogram.database.models.image_raiting import ImageRating
+from svitlogram.database.models.images import Image
+from svitlogram.repository.images import get_image_by_id
 
 
 async def create_rating(user_id: int, rating: int, image_id: int, db: Session) -> ImageRating:
@@ -22,6 +24,11 @@ async def create_rating(user_id: int, rating: int, image_id: int, db: Session) -
     db.commit()
     db.refresh(rating)
 
+    image = await get_image_by_id(image_id=image_id, db=db)
+    image.avg_rating = round(await get_image_rating(image, db=db), 1)
+    db.commit()
+    db.refresh(image)
+    
     return rating
 
 
@@ -79,8 +86,15 @@ async def remove_rating(rating: ImageRating, db: Session) -> None:
     :param db: AsyncSession: Pass the database session to the function
     :return: None
     """
+    
+    image = await get_image_by_id(image_id=rating.image_id, db=db)
+    
     db.delete(rating)
     db.commit()
+
+    image.avg_rating = round(await get_image_rating(image, db=db), 1)
+    db.commit()
+    db.refresh(image)
 
 
 async def update_rating(rating: ImageRating, new_rating: int, db: Session) -> ImageRating:
@@ -97,4 +111,18 @@ async def update_rating(rating: ImageRating, new_rating: int, db: Session) -> Im
 
     db.refresh(rating)
 
+    image = await get_image_by_id(image_id=rating.image_id, db=db)
+    image.avg_rating = round(await get_image_rating(image, db=db), 1)
+    db.commit()
+    db.refresh(image)
+
     return rating
+
+async def get_image_rating(image: Image, db: Session) -> float:
+    average_rating = (
+        db.query(func.coalesce(func.avg(ImageRating.rating), 0))
+        .filter(ImageRating.image_id == image.id)
+        .scalar()
+    )
+
+    return average_rating    
