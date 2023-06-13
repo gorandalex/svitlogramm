@@ -25,25 +25,63 @@
                 <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">bla-bla</a>
                 <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">bla-bla</a>
                 </li>
-                <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">bla-bla</a>
+                <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary" onclick="logout()">Logout</a>
                 </li>
                 </li>
 
             </ul>
         </footer>
     </div>
-    <div class="container">
-        <div class="row mb-3 ">
-
-            <main class="form-signin w-100 m-auto">
-                <h1>Images</h1>
-                <ul class="list-group list-group-flush" id="images"></ul>
-            </main>
+    <main>
+        <div class="container">
+            <div class="row mb-3">
+                <div class="col-sm-6 col-lg-8 themed-grid-col">
+                    <!-- 
+                    <h1 class="my_display-4 text-body-emphasis text-center">All Imeges</h1>
+                    -->
+                    <div class="form-signin w-100 m-auto">
+                        <ul class="list-group list-group-flush" id="images"></ul>
+                    </div>
+    
+                    <nav>
+                        <ul class="d-flex justify-content-between w-100 mb-1 px-5 mx-auto">
+                            <a class="btn mb-1 mb-md-0 btn-outline " id="previousBtn">
+                                ❮ Previous
+                            </a>
+                            <a class="btn mb-1 mb-md-0 btn-outline" id="nextBtn">
+                                Next ❯
+                            </a>
+                        </ul>
+                    </nav>
+                </div>
+    
+                <div class="col-6 col-lg-4 themed-grid-col">
+                    <div class="d-grid gap-2 d-sm-flex justify-content-center mb-5">
+                        <a href="#" class="btn btn-outline btn-lg px-4">Top 10 photo</a>
+                        <a href="#" class="btn btn-outline btn-lg px-4">Button 2</a>
+                    </div>
+                    <div class="d-grid gap-3 justify-content-center mb-5">
+                        <h3 class="text-top-tags">TOP 10 tags</h3>
+                        <div class="d-grid gap-3 justify-content-center mb-5">
+                        <a class="btn mb-2 mb-md-0 btn-outline-danger btn-sm" href="#">Top Top</a>
+                        
+                        </div>
+                    </div>
+    
+                </div>
+            </div>
         </div>
-        <div class="px-4 pt-5 my-5 text-center border-bottom"></div>
-    </div>
+    
+    
+        <div class="px-4 pt-5 my-5 text-center border-bottom">
+    
+        </div>
+    
+    </main>
     
     <script src="javascript/images.js"></script>
+    <script src="javascript/logout.js"></script>
+    <script src="javascript/pagination.js"></script>
 </body>
 
 </html>

@@ -124,7 +124,7 @@ async def upload_image(
 
 
 @router.get("/", response_model=list[ImagePublic], description="Get all images",
-            dependencies=[Depends(RateLimiter(times=300, seconds=60))])
+            )#dependencies=[Depends(RateLimiter(times=300, seconds=60))]
 async def get_images(
         skip: int = 0,
         limit: int = Query(default=10, ge=1, le=100),
