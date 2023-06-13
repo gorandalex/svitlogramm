@@ -1,10 +1,11 @@
 import logging
 
 from typing import Optional
+from datetime import date
 
 from libgravatar import Gravatar
 from sqlalchemy.orm import joinedload, Session
-from sqlalchemy import select, update, or_, func, RowMapping
+from sqlalchemy import select, update, or_, and_, func, RowMapping
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import exists
@@ -247,17 +248,47 @@ async def get_user_profile_by_username(username: str, db: Session) -> RowMapping
     return user.mappings().first()
 
 
-async def get_users_with_images(db: Session, skip: int = 0, limit: int = None) -> list[User]:
+async def get_users_with_filter(
+    db: Session,
+    skip: int = 0,
+    limit: int = None,
+    first_name: Optional[str] = None,
+    last_name: Optional[str] = None,
+    role: Optional[UserRole] = None,
+    created_at_start: Optional[str] = None,
+    created_at_end: Optional[str] = None,
+    has_images: Optional[bool] = None,
+) -> list[User]:
     """
-    Returns a list of users from the database who have images.
+    Returns a list of users from the database, filtered by the specified criteria.
 
     :param db: Session: Database session
-    :param role: UserRole: User role (admin or moderator)
     :param skip: int: Skip the first n records in the result
     :param limit: int: Limit the number of results returned
-    :return: List[User]: List of users with images
+    :param first_name: str: Filter users by first name
+    :param last_name: str: Filter users by last name
+    :param role: str: Filter users by role
+    :param created_at_start: str: Filter users by created_at start date (format: YYYY-MM-DD)
+    :param created_at_end: str: Filter users by created_at end date (format: YYYY-MM-DD)
+    :param has_images: bool: Filter users by the presence of images
+    :return: List[User]: List of users, filtered by the specified criteria
     """
-    query = db.query(User).options(joinedload(User.images)).filter(exists().where(User.id == Image.user_id))
+    query = db.query(User).options(joinedload(User.images))
 
-    return query.offset(skip).limit(limit).all()
- 
+    if first_name:
+        query = query.filter(User.first_name == first_name)
+    if last_name:
+        query = query.filter(User.last_name == last_name)
+    if role:
+        query = query.filter(User.role == role)
+    if created_at_start and created_at_end:
+        query = query.filter(User.created_at.between(created_at_start, created_at_end))
+    if has_images:
+        if has_images:
+            query = query.filter(exists().where(User.id == Image.user_id))
+        else:
+            query = query.filter(exists().where(User.id == Image.user_id).not_())
+
+    users = query.offset(skip).limit(limit)
+
+    return users.all()
