@@ -8,6 +8,7 @@ from sqlalchemy import (
     Integer,
     Table,
     Column,
+    Float,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -37,6 +38,7 @@ class Image(Base):
     created_at: Mapped[datetime] = mapped_column(default=func.now())
     updated_at: Mapped[Optional[datetime]] = mapped_column(onupdate=func.now())
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
+    avg_rating: Mapped[float] = mapped_column(Float, default=0, nullable=True)
 
     user: Mapped[User] = relationship(backref="images")
     tags: Mapped[Tag] = relationship("Tag", secondary=image_m2m_tag, backref="images", lazy='joined')
