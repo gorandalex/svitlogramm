@@ -133,9 +133,13 @@ async def get_images(
         user_id: Optional[int] = Query(default=None, ge=1),
 
         sort_by: Optional[repository_images.SortMode] = repository_images.SortMode.NOT_SORT,
+<<<<<<< HEAD
+        db: Session = Depends(get_db),
+=======
 
         db: Session = Depends(get_db),
 
+>>>>>>> 75ec4f8030495971fe1a0fc84d7355c469ff9362
         current_user: User = Depends(get_current_active_user)
 ) -> Any:
     """
