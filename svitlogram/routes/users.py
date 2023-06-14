@@ -1,5 +1,8 @@
 import asyncio
-from typing import Any, List, Union
+
+from datetime import datetime
+from typing import Any, Optional, List
+
 
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, status, Security
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -240,6 +243,7 @@ async def unban_user(
     return await repository_users.user_update_is_active(user, True, db)
 
 
+
 @router.get("/search/", response_model=List[user_schemas.UserInfo],
             dependencies=[Depends(RateLimiter(times=10, seconds=60))])
 async def search_users(
@@ -290,5 +294,53 @@ async def search_data(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Data not found")
 
     return SearchResults(users=users, images=images)
+
+
+@router.get("/users/with_filter", response_model=list[UserPublic])
+async def get_users_with_filter(
+    current_user: User = Depends(get_current_active_user),
+    skip: int = 0,
+    limit: int = None,
+    first_name: Optional[str] = None,
+    last_name: Optional[str] = None,
+    role: Optional[UserRole] = None,
+    created_at_start: Optional[str] = "2023-01-01",
+    created_at_end: Optional[str] = datetime.today().strftime("%Y-%m-%d"),
+    has_images: Optional[bool] = None,
+    db: Session = Depends(get_db),
+) -> list[UserPublic]:
+    """
+    Get a list of users from the database, filtered by the specified criteria.
+
+    :param current_user: User: Get the current user from the database.
+    :param skip: int: Skip the first n records in the database.
+    :param limit: int: Limit the number of results returned.
+    :param first_name: str: Filter users by first name.
+    :param last_name: str: Filter users by last name.
+    :param role: str: Filter users by role.
+    :param created_at_start: str: Filter users by created_at start date (format: YYYY-MM-DD).
+    :param created_at_end: str: Filter users by created_at end date (format: YYYY-MM-DD).
+    :param has_images: bool: Filter users by the presence of images.
+    :param db: Session: The database session dependency.
+    :return: List[UserPublic]: List of users, filtered by the specified criteria.
+    """
+    if current_user.role == UserRole.user:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail="Access denied. Access not open to 'user' role.")
+    
+    try:
+        datetime.strptime(created_at_start, "%Y-%m-%d")
+    except ValueError:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail=f"Invalid date format: {created_at_start}. Use format: YYYY-MM-DD.")
+
+    try:
+        datetime.strptime(created_at_end, "%Y-%m-%d")
+    except ValueError:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail=f"Invalid date format: {created_at_end}. Use format: YYYY-MM-DD.")
+
+    return await repository_users.get_users_with_filter(db, skip, limit, first_name, last_name, role, 
+                                                        created_at_start, created_at_end, has_images)
 
 
