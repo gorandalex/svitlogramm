@@ -1,6 +1,6 @@
 import logging
 
-from typing import Optional
+from typing import Optional, Type
 
 from libgravatar import Gravatar
 from sqlalchemy.orm import Session
@@ -244,3 +244,19 @@ async def get_user_profile_by_username(username: str, db: Session) -> RowMapping
     )
 
     return user.mappings().first()
+
+
+async def search_users(data: str, db: Session) -> list[Type[User]]:
+    """
+    The search_users function searches the database for users that match a given string.
+    The function takes in two arguments: data and db. The data argument is the string to be searched,
+    and db is an instance of Session from SQLAlchemy's ORM (Object Relational Mapper). The function returns a list of User objects.
+
+    :param data: str: Search for users in the database
+    :param db: Session: Access the database
+    :return: A list of users that match the search criteria
+    """
+    users = db.query(User).filter(User.first_name.ilike(f"%{data}%") |
+                                  User.last_name.ilike(f"%{data}%") |
+                                  User.username.ilike(f"%{data}%")).all()
+    return users

@@ -1,6 +1,6 @@
 import asyncio
 import mimetypes
-from typing import Optional, Any
+from typing import Optional, Any, List
 
 from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException, status, Query, Body
 from fastapi_limiter.depends import RateLimiter
@@ -123,7 +123,7 @@ async def upload_image(
 
 
 @router.get("/", response_model=list[ImagePublic], description="Get all images",
-            dependencies=[Depends(RateLimiter(times=30, seconds=60))])
+            )#dependencies=[Depends(RateLimiter(times=30, seconds=60))]
 async def get_images(
         skip: int = 0,
         limit: int = Query(default=10, ge=1, le=100),
@@ -133,13 +133,7 @@ async def get_images(
         user_id: Optional[int] = Query(default=None, ge=1),
 
         sort_by: Optional[repository_images.SortMode] = repository_images.SortMode.NOT_SORT,
-<<<<<<< HEAD
         db: Session = Depends(get_db),
-=======
-
-        db: Session = Depends(get_db),
-
->>>>>>> 75ec4f8030495971fe1a0fc84d7355c469ff9362
         current_user: User = Depends(get_current_active_user)
 ) -> Any:
     """
@@ -246,3 +240,27 @@ async def delete_image(
     await repository_images.delete_image(image, db)
 
     return {"message": "Image successfully deleted"}
+
+
+@router.get("/search/", response_model=List[ImagePublic],
+            dependencies=[Depends(RateLimiter(times=10, seconds=60))])
+async def search_images(
+        data: str,
+        db: Session = Depends(get_db),
+        _: User = Depends(get_current_active_user)
+) -> Any:
+    """
+    The search_images function is used to search for images in the database.
+        The function takes a string as an argument and searches for all images that contain this string in their name or description.
+        If no image is found, it returns a 404 error message.
+
+    :param data: str: Search for images in the database
+    :param db: Session: Pass the database connection to the function
+    :param _: User: Check if the user is logged in
+    :return: A list of images
+    """
+    images = await repository_images.search_images(data, db)
+    if not images:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Images not found")
+
+    return images
