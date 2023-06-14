@@ -5,9 +5,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session, aliased
 from svitlogram.database.models import Image, Tag, ImageRating
 
-from typing import Optional
+from typing import Optional, Type
 
 from .tags import get_or_create_tags
+
 
 class SortMode(enum.Enum):
 
@@ -31,7 +32,6 @@ async def get_image_by_id(image_id: int, db: Session) -> Image:
         .filter(Image.id == image_id)
     )
     
-
 
 async def create_image(user_id: int, description: str, tags: list[str], public_id: str, db: Session) -> Image:
     """
@@ -135,7 +135,7 @@ async def get_images(
     if image_id:
         query = query.filter(Image.id == image_id)
         
-    if sort_by == SortMode.RAITING:  # Сортировка по средней оценке
+    if sort_by == SortMode.RAITING:
         subquery = (
             db.query(Image.id, func.coalesce(func.avg(ImageRating.rating), 0).label("average_rating"))
             .outerjoin(ImageRating, ImageRating.image_id == Image.id)
@@ -143,7 +143,7 @@ async def get_images(
             .subquery()
         )
         query = query.join(subquery, Image.id == subquery.c.id).order_by(subquery.c.average_rating.asc())
-    elif sort_by == SortMode.RAITING_DESC:  # Сортировка по средней оценке
+    elif sort_by == SortMode.RAITING_DESC:  #
         subquery = (
             db.query(Image.id, func.coalesce(func.avg(ImageRating.rating), 0).label("average_rating"))
             .outerjoin(ImageRating, ImageRating.image_id == Image.id)
@@ -151,13 +151,27 @@ async def get_images(
             .subquery()
         )
         query = query.join(subquery, Image.id == subquery.c.id).order_by(subquery.c.average_rating.desc())
-    elif sort_by == SortMode.DATE:  # Сортировка по дате добавления
+    elif sort_by == SortMode.DATE:
         query = query.order_by(Image.created_at.asc())
-    elif sort_by == SortMode.DATE_DESC:  # Сортировка по дате добавления
+    elif sort_by == SortMode.DATE_DESC:
         query = query.order_by(Image.created_at.desc())
 
     image = db.scalars(query)
 
     return image.unique().all()  # noqa
 
+
+async def search_images(data: str, db: Session) -> list[Type[Image]]:
+    """
+    The search_images function searches the database for images that match a given search query.
+    The function takes in a string of data and returns a list of Image objects.
+
+    :param data: str: Pass in the search query
+    :param db: Session: Pass the database session to the function
+    :return: A list of image objects that match the search criteria
+    """
+    images = db.query(Image).filter(Image.description.ilike(f"%{data}%") |
+                                    Image.tags.any(Tag.name.ilike(f"%{data}%"))).all()
+
+    return images
 
