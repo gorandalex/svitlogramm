@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from svitlogram.database.models import ImageComment
 from svitlogram.repository.comments import create_comment, get_comments_by_image_or_user_id, update_comment, remove_comment, get_comment_by_id
 
+
 class TestComments(unittest.IsolatedAsyncioTestCase):
 
     def setUp(self):
