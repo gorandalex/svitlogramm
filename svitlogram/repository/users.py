@@ -1,11 +1,11 @@
 import logging
 
-from typing import Optional
+from typing import Optional, List, Type
 from datetime import date
 
 from libgravatar import Gravatar
 from sqlalchemy.orm import joinedload, Session
-from sqlalchemy import select, update, or_, and_, func, RowMapping
+from sqlalchemy import select, update, or_, and_, func, RowMapping, not_
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import exists
@@ -249,16 +249,16 @@ async def get_user_profile_by_username(username: str, db: Session) -> RowMapping
 
 
 async def get_users_with_filter(
-    db: Session,
-    skip: int = 0,
-    limit: int = None,
-    first_name: Optional[str] = None,
-    last_name: Optional[str] = None,
-    role: Optional[UserRole] = None,
-    created_at_start: Optional[str] = None,
-    created_at_end: Optional[str] = None,
-    has_images: Optional[bool] = None,
-) -> list[User]:
+        db: Session,
+        skip: int = 0,
+        limit: int = None,
+        first_name: Optional[str] = None,
+        last_name: Optional[str] = None,
+        role: Optional[UserRole] = None,
+        created_at_start: Optional[str] = None,
+        created_at_end: Optional[str] = None,
+        has_images: Optional[bool] = None,
+) -> list[Type[User]]:
     """
     Returns a list of users from the database, filtered by the specified criteria.
 
@@ -284,10 +284,9 @@ async def get_users_with_filter(
     if created_at_start and created_at_end:
         query = query.filter(User.created_at.between(created_at_start, created_at_end))
     if has_images:
-        if has_images:
-            query = query.filter(exists().where(User.id == Image.user_id))
-        else:
-            query = query.filter(exists().where(User.id == Image.user_id).not_())
+        query = query.filter(exists().where(User.id == Image.user_id))
+    else:
+        query = query.filter(not_(exists().where(User.id == Image.user_id)))
 
     users = query.offset(skip).limit(limit)
 

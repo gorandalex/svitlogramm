@@ -21,6 +21,7 @@ from config import settings
 router = APIRouter(prefix="/users", tags=["Users"])
 security = HTTPBearer()
 
+
 @router.get(
     "/me/",
     response_model=user_schemas.UserPublic,
