@@ -7,10 +7,12 @@ from sqlalchemy.exc import DatabaseError
 from main import app
 from svitlogram.database.models.base import Base
 from svitlogram.database.connect import get_db
+from config import settings
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
+DATABASE_URL = settings.DATABASE_URL
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
+
+engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
