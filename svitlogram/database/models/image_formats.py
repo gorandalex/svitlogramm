@@ -1,7 +1,7 @@
 from typing import Optional
 from datetime import datetime
 
-from sqlalchemy import ForeignKey, func, UniqueConstraint
+from sqlalchemy import ForeignKey, func, UniqueConstraint, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.dialects.postgresql import JSONB
 
@@ -16,11 +16,14 @@ class ImageFormat(Base):
     )
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    format: Mapped[dict] = mapped_column(JSONB)
+    if True:
+        format: Mapped[dict] = mapped_column(String)
+    else:
+        format: Mapped[dict] = mapped_column(JSONB)
+
     user_id: Mapped[str] = mapped_column(ForeignKey(User.id, ondelete="CASCADE", onupdate="CASCADE"), index=True)
     image_id: Mapped[str] = mapped_column(ForeignKey("images.id", ondelete="CASCADE", onupdate="CASCADE"), index=True)
     created_at: Mapped[datetime] = mapped_column(default=func.now())
     updated_at: Mapped[Optional[datetime]] = mapped_column(onupdate=func.now())
 
     user: Mapped[User] = relationship(backref="formats")
-    
