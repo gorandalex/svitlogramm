@@ -16,11 +16,7 @@ class ImageFormat(Base):
     )
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    if True:
-        format: Mapped[dict] = mapped_column(String)
-    else:
-        format: Mapped[dict] = mapped_column(JSONB)
-
+    format: Mapped[dict] = mapped_column(JSONB)
     user_id: Mapped[str] = mapped_column(ForeignKey(User.id, ondelete="CASCADE", onupdate="CASCADE"), index=True)
     image_id: Mapped[str] = mapped_column(ForeignKey("images.id", ondelete="CASCADE", onupdate="CASCADE"), index=True)
     created_at: Mapped[datetime] = mapped_column(default=func.now())
