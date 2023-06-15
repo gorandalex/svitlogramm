@@ -9,11 +9,11 @@ from svitlogram.database.models.base import Base
 from svitlogram.database.connect import get_db
 from config import settings
 
-DATABASE_URL = settings.DATABASE_URL
+DATABASE_URL = settings.DATABASE_URL_TEST
 
 
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
-TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+engine = create_engine(DATABASE_URL)
+TestingSessionLocal = sessionmaker(bind=engine)
 
 
 @pytest.fixture(scope="module")
