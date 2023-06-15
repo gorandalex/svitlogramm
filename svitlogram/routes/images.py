@@ -62,6 +62,7 @@ allowed_content_types_upload = [
     ".webp",
     ]
 
+
 @router.post(
     "/", response_model=ImageCreateResponse, response_model_by_alias=False, status_code=status.HTTP_201_CREATED,
     dependencies=[Depends(RateLimiter(times=10, seconds=60))]
@@ -177,7 +178,7 @@ async def get_image(
     return image
 
 
-@router.patch("/", response_model=ImagePublic, dependencies=[Depends(RateLimiter(times=10, seconds=60))])
+@router.patch("/", response_model=ImagePublic,)# dependencies=[Depends(RateLimiter(times=10, seconds=60))]
 async def update_image_data(
         image_id: int = Body(ge=1),
         description: str = Body(min_length=10, max_length=1200),
@@ -204,7 +205,7 @@ async def update_image_data(
     if image is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not found image")
 
-    if current_user.role != UserRole.admin and image.user_id != current_user.id:
+    if not (current_user.role == UserRole.admin or image.user_id == current_user.id):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
 
     updated_image = await repository_images.update_description(image_id, description, tags, db)
@@ -232,7 +233,7 @@ async def delete_image(
     if image is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not found image")
 
-    if current_user.role != UserRole.admin and image.user_id != current_user.id:
+    if current_user.role != UserRole.admin:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
 
     loop = asyncio.get_event_loop()
