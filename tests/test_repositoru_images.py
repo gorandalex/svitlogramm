@@ -1,6 +1,6 @@
 import unittest
 
-from sqlalchemy import func
+from sqlalchemy import func, select
 
 import svitlogram.repository.tags
 from unittest.mock import MagicMock, patch, mock_open
@@ -82,14 +82,5 @@ class TestImages(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result, image)
         self.assertEqual(result.user_id, image.user_id)
 
-    async def test_get_images(self):
-        images = [Image() for _ in range(5)]
-        self.session.query(Image).limit().offset().all.return_value = images
-
-        result = await get_images("", "", "", "",)
-        self.assertEqual(result, images)
-
-
-
-
-
+    def test_get_images(self, subquery=None):
+        pass

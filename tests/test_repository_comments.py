@@ -133,7 +133,4 @@ class TestComments(unittest.IsolatedAsyncioTestCase):
                 self.assertIn(comment, result)
 
 
-if __name__ == '__main__':
-    unittest.main()
-
 
