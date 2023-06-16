@@ -82,7 +82,7 @@ async def startup():
 
                            db=0, encoding="utf-8", decode_responses=True, password=settings.redis_password) 
 
-                           db=0, encoding="utf-8", decode_responses=True, password=settings.redis_password)
+
 
     await FastAPILimiter.init(r)
 
