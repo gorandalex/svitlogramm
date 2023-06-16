@@ -179,6 +179,32 @@ async def get_user_profile(
     return user_profile
 
 
+@router.get("/users_id/{user_id}",
+            dependencies=[Depends(RateLimiter(times=10, seconds=60))])
+async def get_user_by_id(
+        user_id: int,
+        db: Session = Depends(get_db),
+        current_user: User = Depends(get_current_active_user)
+) -> Any:
+    """
+    The get_user_profile function is a GET endpoint that returns the user profile of a given username.
+    It takes in an optional parameter, db, which is used to connect to the database. It also takes in another
+    optional parameter, current_user, which represents the currently logged-in user.
+
+    :param user_id: str: Get the username from the url
+    :param db: Session: Pass the database session to the function
+    :param current_user: User: Get the current user
+    :return: A userprofile object
+    """
+    user_profile_by_id = await repository_users.get_user_by_id(user_id, db)
+    print("____________________")
+    print(user_profile_by_id)
+    if not user_profile_by_id:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+    return user_profile_by_id
+
+
 @router.patch("/", response_model=user_schemas.UserPublic)
 async def update_user_profile(
         body: user_schemas.ProfileUpdate,
