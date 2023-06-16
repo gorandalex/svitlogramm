@@ -1,7 +1,7 @@
 from typing import Optional
 from datetime import datetime
 
-from sqlalchemy import ForeignKey, func, UniqueConstraint
+from sqlalchemy import ForeignKey, func, UniqueConstraint, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.dialects.postgresql import JSONB
 
@@ -23,4 +23,3 @@ class ImageFormat(Base):
     updated_at: Mapped[Optional[datetime]] = mapped_column(onupdate=func.now())
 
     user: Mapped[User] = relationship(backref="formats")
-    

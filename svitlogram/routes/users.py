@@ -243,7 +243,6 @@ async def unban_user(
     return await repository_users.user_update_is_active(user, True, db)
 
 
-
 @router.get("/search/", response_model=List[user_schemas.UserInfo],
             dependencies=[Depends(RateLimiter(times=10, seconds=60))])
 async def search_users(

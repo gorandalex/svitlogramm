@@ -265,6 +265,7 @@ async def search_users(data: str, db: Session) -> list[Type[User]]:
                                   User.username.ilike(f"%{data}%")).all()
     return users
 
+
 async def get_users_with_filter(
         db: Session,
         skip: int = 0,

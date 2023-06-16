@@ -7,11 +7,13 @@ from sqlalchemy.exc import DatabaseError
 from main import app
 from svitlogram.database.models.base import Base
 from svitlogram.database.connect import get_db
+from config import settings
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
+DATABASE_URL = settings.DATABASE_URL_TEST
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
-TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+engine = create_engine(DATABASE_URL)
+TestingSessionLocal = sessionmaker(bind=engine)
 
 
 @pytest.fixture(scope="module")
@@ -43,4 +45,8 @@ def client(session):
 
 @pytest.fixture(scope="module")
 def user():
-    return {"username": "test_user", "email": "test_user@gmail.com", "password": "12345678", 'confirmed': False}
+    return {"username": "test_user",
+            "email": "test_user@gmail.com",
+            "password": "12345678",
+            'first_name': 'first_name',
+            'last_name': 'last_name'}

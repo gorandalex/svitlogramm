@@ -18,3 +18,6 @@
 /tests/.pytest_cache
 /htmlcov
 /.coverage
+/tests/test.db
+/test.db
+.coverage
