@@ -1,5 +1,8 @@
 import asyncio
-from typing import Any
+
+from datetime import datetime
+from typing import Any, Optional, List
+
 
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, status, Security
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -8,10 +11,12 @@ from sqlalchemy.orm import Session
 
 from svitlogram.database.connect import get_db
 from svitlogram.database.models import User, UserRole
-from svitlogram.repository import users as repository_users
+from svitlogram.repository import users as repository_users, images as repository_images
 from svitlogram.schemas.user import UserPublic, ProfileUpdate
 
 from svitlogram.schemas import user as user_schemas
+from svitlogram.schemas.image import ImagePublic
+from svitlogram.schemas.user import SearchResults
 from svitlogram.services import cloudinary
 from svitlogram.services.auth import AuthService, get_current_active_user
 from svitlogram.utils.filters import UserRoleFilter
@@ -19,6 +24,7 @@ from config import settings
 
 router = APIRouter(prefix="/users", tags=["Users"])
 security = HTTPBearer()
+
 
 @router.get(
     "/me/",
@@ -128,14 +134,15 @@ async def update_password(
 )
 async def change_user_role(
         body: user_schemas.ChangeRole,
-        db: Session = Depends(get_db)
+        db: Session = Depends(get_db),
+        _: User = Depends(get_current_active_user)
 ) -> Any:
     """
     The change_user_role function is used to change the role of a user.
 
     :param body: user_schemas.ChangeRole: Validate the request body
     :param db: Session: Pass the database session to the repository layer
-    :param current_user: User: Get the current user
+    :param _: User: Get the current user
     :return: A dictionary with the user_id and role
     """
     user = await repository_users.get_user_by_id(body.user_id, db)
@@ -260,3 +267,105 @@ async def unban_user(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
     return await repository_users.user_update_is_active(user, True, db)
+
+
+@router.get("/search/", response_model=List[user_schemas.UserInfo],
+            dependencies=[Depends(RateLimiter(times=10, seconds=60))])
+async def search_users(
+        data: str,
+        db: Session = Depends(get_db),
+        _: User = Depends(get_current_active_user)
+) -> Any:
+
+    """
+    The search_users function is used to search for users in the database.
+        The function takes a string as an argument and searches for users with that string in their username or email.
+        If no user is found, it returns a 404 error message.
+
+    :param data: str: Pass the search query to the function
+    :param db: Session: Get the database session
+    :param _: User: Ensure that the user is logged in
+    :return: A list of users
+    """
+    users = await repository_users.search_users(data, db)
+    if not users:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+    return users
+
+
+@router.get("/search_all/", response_model=SearchResults,
+            dependencies=[Depends(RateLimiter(times=10, seconds=60))])
+async def search_data(
+        data: str,
+        db: Session = Depends(get_db),
+        _: User = Depends(get_current_active_user)
+) -> Any:
+    """
+    The search_data function is used to search for users and images.
+        It takes a string as an argument, which will be searched in the database.
+        If there are no results, it returns a 404 error with the message &quot;Data not found&quot;.
+
+
+    :param data: str: Get the data that will be searched for
+    :param db: Session: Get a database session from the dependency injection container
+    :param _: User: Check if the user is logged in
+    :return: A searchresults object, which contains the results of both searches
+    """
+    users = await repository_users.search_users(data, db)
+    images = await repository_images.search_images(data, db)
+
+    if not users and not images:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Data not found")
+
+    return SearchResults(users=users, images=images)
+
+
+@router.get("/users/with_filter", response_model=list[UserPublic])
+async def get_users_with_filter(
+    current_user: User = Depends(get_current_active_user),
+    skip: int = 0,
+    limit: int = None,
+    first_name: Optional[str] = None,
+    last_name: Optional[str] = None,
+    role: Optional[UserRole] = None,
+    created_at_start: Optional[str] = "2023-01-01",
+    created_at_end: Optional[str] = datetime.today().strftime("%Y-%m-%d"),
+    has_images: Optional[bool] = None,
+    db: Session = Depends(get_db),
+) -> list[UserPublic]:
+    """
+    Get a list of users from the database, filtered by the specified criteria.
+
+    :param current_user: User: Get the current user from the database.
+    :param skip: int: Skip the first n records in the database.
+    :param limit: int: Limit the number of results returned.
+    :param first_name: str: Filter users by first name.
+    :param last_name: str: Filter users by last name.
+    :param role: str: Filter users by role.
+    :param created_at_start: str: Filter users by created_at start date (format: YYYY-MM-DD).
+    :param created_at_end: str: Filter users by created_at end date (format: YYYY-MM-DD).
+    :param has_images: bool: Filter users by the presence of images.
+    :param db: Session: The database session dependency.
+    :return: List[UserPublic]: List of users, filtered by the specified criteria.
+    """
+    if current_user.role == UserRole.user:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail="Access denied. Access not open to 'user' role.")
+    
+    try:
+        datetime.strptime(created_at_start, "%Y-%m-%d")
+    except ValueError:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail=f"Invalid date format: {created_at_start}. Use format: YYYY-MM-DD.")
+
+    try:
+        datetime.strptime(created_at_end, "%Y-%m-%d")
+    except ValueError:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail=f"Invalid date format: {created_at_end}. Use format: YYYY-MM-DD.")
+
+    return await repository_users.get_users_with_filter(db, skip, limit, first_name, last_name, role, 
+                                                        created_at_start, created_at_end, has_images)
+
+

@@ -1,10 +1,10 @@
 import asyncio
 import mimetypes
-from typing import Optional, Any
+from typing import Optional, Any, List
 
 from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException, status, Query, Body
 from fastapi_limiter.depends import RateLimiter
-from sqlalchemy.ext.asyncio import AsyncSession
+
 from sqlalchemy.orm import Session
 
 from svitlogram.database.connect import get_db
@@ -85,7 +85,7 @@ async def upload_image(
     :param file: UploadFile: Receive the image file from the client
     :param description: str: Get the description of the image from the request body
     :param tags: Optional[list[str]]: Validate the tag list
-    :param db: AsyncSession: Get the database session
+    :param db: Session: Get the database session
     :param current_user: User: Get the current user that is logged in
     :param : Get the image id from the url
     :return: A dictionary with the image and detail keys
@@ -124,7 +124,8 @@ async def upload_image(
 
 
 @router.get("/", response_model=list[ImagePublic], description="Get all images",
-            )#dependencies=[Depends(RateLimiter(times=300, seconds=60))]
+            )#dependencies=[Depends(RateLimiter(times=30, seconds=60))]
+
 async def get_images(
         skip: int = 0,
         limit: int = Query(default=10, ge=1, le=100),
@@ -132,6 +133,7 @@ async def get_images(
         tags: Optional[list[str]] = Query(default=None, max_length=50),
         image_id: Optional[int] = Query(default=None, ge=1),
         user_id: Optional[int] = Query(default=None, ge=1),
+        sort_by: Optional[repository_images.SortMode] = repository_images.SortMode.NOT_SORT,
         db: Session = Depends(get_db),
         current_user: User = Depends(get_current_active_user)
 ) -> Any:
@@ -148,11 +150,11 @@ async def get_images(
     :param tags: Optional[list[str]]: Filter the images by tags
     :param image_id: Optional[int]: Get the image by id
     :param user_id: Optional[int]: Filter the images by user_id
-    :param db: AsyncSession: Get the database session
+    :param db: Session: Get the database session
     :param current_user: User: Get the current user from the database
     :return: A list of images
     """
-    return await repository_images.get_images(skip, limit, description, tags, image_id, user_id, db)
+    return await repository_images.get_images(skip, limit, description, tags, image_id, user_id, sort_by, db)
 
 
 @router.get("/{image_id}", response_model=ImagePublic)
@@ -176,7 +178,7 @@ async def get_image(
     return image
 
 
-@router.patch("/", response_model=ImagePublic, dependencies=[Depends(RateLimiter(times=10, seconds=60))])
+@router.patch("/", response_model=ImagePublic,)# dependencies=[Depends(RateLimiter(times=10, seconds=60))]
 async def update_image_data(
         image_id: int = Body(ge=1),
         description: str = Body(min_length=10, max_length=1200),
@@ -203,7 +205,7 @@ async def update_image_data(
     if image is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not found image")
 
-    if current_user.role != UserRole.admin and image.user_id != current_user.id:
+    if not (current_user.role == UserRole.admin or image.user_id == current_user.id):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
 
     updated_image = await repository_images.update_description(image_id, description, tags, db)
@@ -222,7 +224,7 @@ async def delete_image(
     The delete_image function deletes an image from the database and cloudinary.
 
     :param image_id: int: Get the image id from the url
-    :param db: AsyncSession: Get the database session
+    :param db: Session: Get the database session
     :param current_user: User: Get the current user
     :return: A dictionary with the message key and value
     """
@@ -231,7 +233,7 @@ async def delete_image(
     if image is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not found image")
 
-    if current_user.role != UserRole.admin and image.user_id != current_user.id:
+    if current_user.role != UserRole.admin:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
 
     loop = asyncio.get_event_loop()
@@ -239,3 +241,27 @@ async def delete_image(
     await repository_images.delete_image(image, db)
 
     return {"message": "Image successfully deleted"}
+
+
+@router.get("/search/", response_model=List[ImagePublic],
+            dependencies=[Depends(RateLimiter(times=10, seconds=60))])
+async def search_images(
+        data: str,
+        db: Session = Depends(get_db),
+        _: User = Depends(get_current_active_user)
+) -> Any:
+    """
+    The search_images function is used to search for images in the database.
+        The function takes a string as an argument and searches for all images that contain this string in their name or description.
+        If no image is found, it returns a 404 error message.
+
+    :param data: str: Search for images in the database
+    :param db: Session: Pass the database connection to the function
+    :param _: User: Check if the user is logged in
+    :return: A list of images
+    """
+    images = await repository_images.search_images(data, db)
+    if not images:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Images not found")
+
+    return images

@@ -2,11 +2,12 @@ import enum
 
 from datetime import datetime
 from strenum import StrEnum
-from typing import Optional
+from typing import Optional, List
 
 from pydantic import EmailStr, constr
 
 from svitlogram.database.models import UserRole
+from svitlogram.schemas.image import ImagePublic
 from .core import DateTimeModelMixin, IDModelMixin, CoreModel
 
 
@@ -21,6 +22,19 @@ class UserBase(CoreModel):
     avatar: str
     role: str
     email_verified: bool
+
+
+class UserInfo(CoreModel):
+    """
+    Leaving off password and salt from base model
+    """
+    username: str
+    first_name: str
+    last_name: str
+    avatar: str
+
+    class Config:
+        orm_mode = True
 
 
 class UserPublic(DateTimeModelMixin, UserBase, IDModelMixin):
@@ -77,3 +91,8 @@ class ProfileUpdate(CoreModel):
         min_length=3, max_length=20, regex="[a-zA-Z0-9_-]+$")] = None
     first_name: Optional[constr(min_length=3, max_length=100)] = None
     last_name: Optional[constr(min_length=3, max_length=100)] = None
+
+
+class SearchResults(CoreModel):
+    users: List[UserInfo]
+    images: List[ImagePublic]

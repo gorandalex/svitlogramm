@@ -14,3 +14,14 @@
 /svitlogram/services/__pycache__
 /svitlogram/utils/__pycache__
 /svitlogram/routes/docs/__pycache__
+/tests/__pycache__
+/tests/.pytest_cache
+/htmlcov
+/.coverage
+/tests/test.db
+/test.db
+.coverage
+
+/fly.toml
+/Procfile
+

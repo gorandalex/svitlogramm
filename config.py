@@ -30,6 +30,7 @@ class Template:
 
 class Settings(BaseSettings):
     DATABASE_URL: str = "postgresql://postgres:password@localhost:5432/postgres"
+    DATABASE_URL_TEST: str = "postgresql://postgres:password@localhost:5432/postgres"
 
     secret_key_jwt: str = "secret_key_jwt"
     algorithm: str = "HS256"
