@@ -1,5 +1,7 @@
 console.log("Run")
 
+const baseUrl = 'http://127.0.0.1:8000'
+
 const form = document.forms[0]
 
 form.addEventListener("submit", async(e) => {
@@ -22,7 +24,7 @@ form.addEventListener("submit", async(e) => {
       };
 
     const response = await fetch(
-        "http://127.0.0.1:8000/api/auth/login", 
+        `${baseUrl}/api/auth/login`, 
         requestOptions)
     if (response.status == 200) {
         result = await response.json()

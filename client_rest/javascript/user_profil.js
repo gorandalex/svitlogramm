@@ -2,6 +2,8 @@ token = localStorage.getItem("accessToken")
 
 aboutUser = document.getElementById("about_user")
 
+const baseUrl = 'http://127.0.0.1:8000'
+
 const urlParams = new URLSearchParams(window.location.search);
 const username = urlParams.get('username');
 
@@ -18,7 +20,7 @@ const getInfoUser = async () => {
     };
   
 
-    const respons = await fetch(`http://127.0.0.1:8000/api/users/${username}`, requestOptions)
+    const respons = await fetch(`${baseUrl}/api/users/${username}`, requestOptions)
     if (respons.status === 200) {
       result = await respons.json()
       aboutUser.innerHTML = ""

@@ -2,6 +2,8 @@ token = localStorage.getItem("accessToken")
 
 images = document.getElementById("images")
 
+const baseUrl = 'http://127.0.0.1:8000'
+
 const getUserById = async (user_id) => {
   const myHeaders = new Headers();
   myHeaders.append(
@@ -14,7 +16,7 @@ const getUserById = async (user_id) => {
     redirect: 'follow'
   };
 
-  const respons = await fetch(`http://127.0.0.1:8000/api/users/users_id/${user_id}`, requestOptions)
+  const respons = await fetch(`${baseUrl}/api/users/users_id/${user_id}`, requestOptions)
   if (respons.status === 200) {
     result = await respons.json()
     return result;
@@ -33,7 +35,7 @@ const getUserByUserName = async (username) => {
     redirect: 'follow'
   };
 
-  const respons = await fetch(`http://127.0.0.1:8000/api/users/${username}`, requestOptions)
+  const respons = await fetch(`${baseUrl}/api/users/${username}`, requestOptions)
   if (respons.status === 200) {
     result = await respons.json()
     return result;
@@ -57,7 +59,7 @@ const getImeges = async () => {
   };
 
 
-  const respons = await fetch("http://127.0.0.1:8000/api/images", requestOptions)
+  const respons = await fetch(`${baseUrl}/api/images`, requestOptions)
   if (respons.status === 200) {
     result = await respons.json()
     images.innerHTML = ""
@@ -103,7 +105,7 @@ const getImeges = async () => {
 
       const imageRatingDiv = document.createElement('div');
       const imageRating = document.createElement('a');
-      imageRating.textContent = 'Rating: '
+      imageRating.textContent = `Rating: ${image.description}`
       imageRatingDiv.appendChild(imageRating)
       imagesDescriptionDiv.appendChild(imageRatingDiv)
 
@@ -124,6 +126,7 @@ const getImeges = async () => {
       el.appendChild(imagesDescriptionDiv);
 
       images.appendChild(el);
+      
     }
   }
 }
