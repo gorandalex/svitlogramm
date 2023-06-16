@@ -21,5 +21,7 @@
 /tests/test.db
 /test.db
 .coverage
-.env
-**/__pycache__
+
+/fly.toml
+/Procfile
+
