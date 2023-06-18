@@ -30,6 +30,6 @@ form.addEventListener("submit", async(e) => {
         result = await response.json()
         localStorage.setItem("accessToken", result.access_token)
         localStorage.setItem("refreshToken", result.refresh_token)
-        window.location = "/images.html"
+        window.location = "images.html"
     }
 })

@@ -82,14 +82,12 @@ async def startup():
 
                            db=0, encoding="utf-8", decode_responses=True, password=settings.redis_password) 
 
-
-
     await FastAPILimiter.init(r)
 
 
 templates = Jinja2Templates(directory="templates")
 BASE_DIR = Path(__file__).parent
-app.mount("/static", StaticFiles(directory=BASE_DIR/"static"), name="static")
+app.mount("/templates", StaticFiles(directory=BASE_DIR/"templates"), name="templates")
 
 
 @app.get("/", name="Svitlogram_api", response_class=HTMLResponse)

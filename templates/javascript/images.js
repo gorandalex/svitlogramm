@@ -72,8 +72,7 @@ const getImeges = async () => {
       const avatar = document.createElement('img');
       avatar.src = user.avatar;
       avatar.style.borderRadius = '20%';
-      avatar.style.width = '30px';
-      avatar.style.height = '30px';
+      avatar.style.width = '35px';
 
       const el = document.createElement('div');
       el.className = 'modal-content rounded-4 shadow';
@@ -105,7 +104,7 @@ const getImeges = async () => {
 
       const imageRatingDiv = document.createElement('div');
       const imageRating = document.createElement('a');
-      imageRating.textContent = `Rating: ${image.description}`
+      imageRating.textContent = `Rating: ${image.avg_rating}`
       imageRatingDiv.appendChild(imageRating)
       imagesDescriptionDiv.appendChild(imageRatingDiv)
 
