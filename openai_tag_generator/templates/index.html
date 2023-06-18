@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>OpenAI Quickstart</title>
+    <link rel="shortcut icon" href="{{ url_for('static', path='/tag.png') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', path='/main.css') }}" />
+</head>
+
+<body>
+    <img src="{{ url_for('static', path='/tag.png') }}" class="icon" />
+    <h3>Name my pet</h3>
+    <form action="/" method="post">
+        <input type="text" name="tag" placeholder="Enter a photo description" autocomplete="off" required />
+        <input type="submit" value="Generate tags" />
+    </form>
+    {% if result %}
+    <div class="result">{{ result }}</div>
+    {% endif %}
+</body>
+
+</html>
