@@ -73,5 +73,9 @@ class TestTags(unittest.IsolatedAsyncioTestCase):
         self.session.delete.assert_called_once_with(tag)
 
     async def test_get_list_tags(self):
-        tags = get_list_tags(["tag1,tag2"])
-        self.assertEquals(list({"tag1", "tag2"}), tags)
+        tags_for_test = ['tag1', 'tag2', "tag3"]
+        tags = get_list_tags("tag1,tag2,tag3")
+        self.assertEqual(len(tags), len(tags_for_test))
+        self.assertIn(tags[0], tags_for_test)
+        self.assertIn(tags[1], tags_for_test)
+        self.assertIn(tags[2], tags_for_test)

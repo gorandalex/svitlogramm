@@ -361,5 +361,3 @@ def test_reset_password_template_not_email_verified(client, user, monkeypatch):
     assert response.json() == {"detail": "Email not confirmed"}
 
 
-if __name__ == '__main__':
-    unittest.main()

@@ -123,6 +123,7 @@ async def remove_tag(tag_id: int, db: Session) -> Optional[Tag]:
 
     return tag
 
+
 def get_list_tags(tags) -> list[str]:
     set_tags = set()
     if isinstance(tags, list):

@@ -119,6 +119,3 @@ class TestImageRatings(unittest.IsolatedAsyncioTestCase):
 
         self.assertEqual(result, average_rating)
 
-
-if __name__ == '__main__':
-    unittest.main()
