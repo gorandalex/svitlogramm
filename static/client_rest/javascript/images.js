@@ -42,6 +42,16 @@ const getUserByUserName = async (username) => {
   }
 }
 
+const form = document.forms[0]
+
+form.addEventListener("submit", async(e) => {
+  e.preventDefault()
+  const searchValue = form.search_info.value
+  const encodedSearchValue = encodeURIComponent(searchValue);
+  console.log(searchValue);
+  window.location = `/static/client_rest/search_info.html?search=${encodedSearchValue}`;
+})
+
 async function main() {
   let currentPageNumber = 1
   let rows = 2
@@ -133,3 +143,4 @@ const getImeges = async () => {
 getImeges();
 }
 main()
+
