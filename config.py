@@ -51,6 +51,8 @@ class Settings(BaseSettings):
     cloudinary_api_secret: str = "secret"
     cloudinary_folder: str = "media"
 
+    OPENAI_API_KEY: str = 'OPENAI_API_KEY'
+
     class Config:
         env_file = BASE_DIR / ".env"
         env_file_encoding = "utf-8"      

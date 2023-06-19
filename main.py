@@ -1,5 +1,6 @@
 from typing import Callable
 from ipaddress import ip_address
+import openai
 
 from pathlib import Path
 import uvicorn
