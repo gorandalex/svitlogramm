@@ -7,6 +7,7 @@ from . import image_formats
 from . import image_comments
 from . import image_ratings
 from . import tags
+from . import openai_chat
 
 
 router = APIRouter()
@@ -18,6 +19,7 @@ router.include_router(image_formats.router)
 router.include_router(image_comments.router)
 router.include_router(image_ratings.router)
 router.include_router(tags.router)
+router.include_router(openai_chat.router)
 
 __all__ = (
     'router',
