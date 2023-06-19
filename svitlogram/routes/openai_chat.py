@@ -1,42 +1,31 @@
 from fastapi import APIRouter
-from pydantic import BaseModel
-from fastapi.responses import RedirectResponse
+import asyncio
+import functools
+from concurrent.futures import ThreadPoolExecutor
 from typing import List
+import openai
 
-router = APIRouter(prefix="/openai/chat", tags=["Chat"])
+router = APIRouter(prefix="/openai", tags=["Chat"])
+loop = asyncio.get_event_loop()
+executor = ThreadPoolExecutor()
 
+def start_chat():
+    assistant = "You are a helpful and creative assistant."
+    prompt = """Reply to a question in a fun and creative way. 
+    The answer has to be in English. The answer has to be no longer than 100 symbols. 
+    No recommendations or additional explanations."""
+    response = openai.ChatCompletion.create(
+    model="gpt-3.5-turbo",
+    messages=[
+        {"role": "system", "content": assistant},
+        {"role": "user", "content": prompt}
+    ],
+    max_tokens = 100,
+    n=1,
+    temperature= 0.6,
+)
+    return response["choices"][0]["text"].strip()
 
-class ChatInput(BaseModel):
-    question: str
-    answer: str
-
-
-@router.post("/chat", response_model=ChatInput, tags=["Chat"])
-async def chat(chat_input: ChatInput):
-    # Here you can implement the logic to interact with OpenAI or any other chatbot model
-    # For simplicity, this example will echo the input question and answer
-    return chat_input
-
-
-@router.get("/docs", include_in_schema=False)
-async def get_documentation():
-    from fastapi import FastAPI
-    import shutil
-
-    app = FastAPI()
-    app.include_router(router)
-
-    # Generate Swagger documentation
-    @app.get("/openapi.json", include_in_schema=False)
-    async def get_openapi():
-        return app.openapi()
-
-    # Serve Swagger UI
-    @app.get("/", include_in_schema=False)
-    async def get_swagger_ui():
-        swagger_ui_path = shutil.which("swagger-ui")
-        if swagger_ui_path is None:
-            raise Exception("Swagger UI not found.")
-        return RedirectResponse(url="/docs")
-
-    return app
+async def generate_response(prompt):
+    response = await loop.run_in_executor(executor, functools.partial(start_chat, prompt))
+    return response
