@@ -8,19 +8,18 @@ const urlParams = new URLSearchParams(window.location.search);
 const username = urlParams.get('username');
 
 const getInfoUser = async () => {
-    const myHeaders = new Headers();
-    myHeaders.append(
-      "Authorization",
-      `Bearer ${token}`);
-  
-    const requestOptions = {
-      method: 'GET',
-      headers: myHeaders,
-      redirect: 'follow'
-    };
-  
+  const myHeaders = new Headers();
+  myHeaders.append(
+    "Authorization",
+    `Bearer ${token}`);
 
-    const respons = await fetch(`${baseUrl}/api/users/${username}`, requestOptions)
+  const requestOptions = {
+    method: 'GET',
+    headers: myHeaders,
+    redirect: 'follow'
+  };
+
+  const respons = await fetch(`${baseUrl}/api/users/${username}`, requestOptions)
     if (respons.status === 200) {
       result = await respons.json()
       aboutUser.innerHTML = ""
@@ -57,18 +56,18 @@ const getInfoUser = async () => {
 
 
       const userInfoUl = document.createElement("ul");
-      userInfoUl.style.paddingLeft = "180px"; 
-      const userFirstNameLi = document.createElement("li");      
+      userInfoUl.style.paddingLeft = "180px";
+      const userFirstNameLi = document.createElement("li");
       userFirstNameLi.textContent = `First Name: ${result.first_name}`;
       userFirstNameLi.classList.add("text-left");
       userInfoUl.appendChild(userFirstNameLi)
-      
-      const userLastNameLi = document.createElement("li");      
+
+      const userLastNameLi = document.createElement("li");
       userLastNameLi.textContent = `Last Name: ${result.last_name}`;
       userLastNameLi.classList.add("text-left");
       userInfoUl.appendChild(userLastNameLi)
-      
-      const usercreateLi = document.createElement("li");  
+
+      const usercreateLi = document.createElement("li");
       const createdAt = new Date(result.created_at);
       const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
       const formattedDate = createdAt.toLocaleDateString(undefined, dateOptions);
@@ -77,17 +76,17 @@ const getInfoUser = async () => {
       usercreateLi.classList.add("text-left");
       userInfoUl.appendChild(usercreateLi)
 
-      const userImageNumberLi = document.createElement("li");      
+      const userImageNumberLi = document.createElement("li");
       userImageNumberLi.textContent = `Number users photos: ${result.number_of_images}`;
       userImageNumberLi.classList.add("text-left");
       userInfoUl.appendChild(userImageNumberLi)
 
-      aboutUserDdiv.appendChild(userInfoUl)    
+      aboutUserDdiv.appendChild(userInfoUl)
       el2.appendChild(avatarDiv)
       el2.appendChild(aboutUserDdiv)
       el1.appendChild(el2)
       aboutUser.appendChild(el1)
 
     }
-}
-getInfoUser()
+  }
+  getInfoUser()
