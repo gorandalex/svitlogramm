@@ -12,8 +12,10 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
 from fastapi_limiter import FastAPILimiter
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy import text
 from sqlalchemy.orm import Session
+
 
 from svitlogram.database.connect import get_db
 from svitlogram.routes import router
@@ -46,7 +48,7 @@ def get_application():
 
     return app
 
-
+security = HTTPBearer()
 app = get_application()
 
 
