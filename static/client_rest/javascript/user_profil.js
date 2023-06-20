@@ -22,6 +22,7 @@ const getInfoUser = async () => {
   const respons = await fetch(`${baseUrl}/api/users/${username}`, requestOptions)
     if (respons.status === 200) {
       result = await respons.json()
+      console.log(result);
       aboutUser.innerHTML = ""
       const img = document.createElement('img');
       img.src = result.avatar;
