@@ -1,7 +1,9 @@
 token = localStorage.getItem("accessToken")
 
+const baseUrl = 'http://svitlogram.fly.dev'
+
 async function logout() {
-    const url = "http://127.0.0.1:8000/api/logout";
+    const url = `${baseUrl}/api/logout`;
     const token = localStorage.getItem("accessToken");
 
     const requestOptions = {

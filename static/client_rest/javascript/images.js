@@ -52,9 +52,6 @@ form.addEventListener("submit", async(e) => {
   window.location = `/static/client_rest/search_info.html?search=${encodedSearchValue}`;
 })
 
-async function main() {
-  let currentPageNumber = 1
-  let rows = 2
 
 const getImeges = async () => {
   const myHeaders = new Headers();
@@ -141,6 +138,4 @@ const getImeges = async () => {
   }
 }
 getImeges();
-}
-main()
 

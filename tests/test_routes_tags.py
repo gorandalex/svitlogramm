@@ -22,12 +22,13 @@ def token(client, user, session, monkeypatch):
     data = response.json()
     return data["access_token"]
 
+
 def test_create(client, token):
     expected = ["tag1", "tag2", "tag3"]
     response = client.post(
         '/api/tags',
         json=expected,
-        headers = {"Authorization": f"Bearer {token}"}
+        headers={"Authorization": f"Bearer {token}"}
     )
 
     data = response.json()
@@ -35,6 +36,7 @@ def test_create(client, token):
 
     assert type(data) == list
     assert actual == expected
+
 
 def test_get_tags(client, token):
     expected = ["tag1", "tag2", "tag3"]
@@ -56,6 +58,7 @@ def test_get_tags(client, token):
     assert type(data) == list
     assert actual == expected
 
+
 def test_get_tag(client, token):
     tags = ["tag1"]
 
@@ -73,6 +76,7 @@ def test_get_tag(client, token):
     data = response.json()
 
     assert "tag1" == data["name"]
+
 
 def test_update_tag(client, token, session):
     tags = ["tag1"]

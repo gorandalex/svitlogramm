@@ -2,7 +2,7 @@ token = localStorage.getItem("accessToken")
 
 aboutUser = document.getElementById("about_user")
 
-const baseUrl = 'https://svitlogram.fly.dev'
+const baseUrl = 'http://svitlogram.fly.dev'
 
 const urlParams = new URLSearchParams(window.location.search);
 const username = urlParams.get('username');
