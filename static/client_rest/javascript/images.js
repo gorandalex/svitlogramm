@@ -42,6 +42,16 @@ const getUserByUserName = async (username) => {
   }
 }
 
+const form = document.forms[0]
+
+form.addEventListener("submit", async(e) => {
+  e.preventDefault()
+  const searchValue = form.search_info.value
+  const encodedSearchValue = encodeURIComponent(searchValue);
+  console.log(searchValue);
+  window.location = `/static/client_rest/search_info.html?search=${encodedSearchValue}`;
+})
+
 async function main() {
   let currentPageNumber = 1
   let rows = 2
@@ -67,7 +77,7 @@ const getImeges = async () => {
     for (const image of result) {
       const img = document.createElement('img');
       img.src = image.url;
-      const user = await getUserById(image.user_id);
+      const user = image.user_id ? await getUserById(image.user_id) : null;
 
       const avatar = document.createElement('img');
       avatar.src = user.avatar;
@@ -87,7 +97,7 @@ const getImeges = async () => {
       const authorLink = document.createElement('a');
       authorLink.className = 'author';
       authorLink.textContent = user.username;
-      authorLink.href = `/user_profile.html?username=${user.username}`
+      authorLink.href = `user_profile.html?username=${user.username}`
       avatarUserNameDiv.appendChild(avatarSpan);
       avatarUserNameDiv.appendChild(authorLink);
 
@@ -105,7 +115,7 @@ const getImeges = async () => {
 
       const imageRatingDiv = document.createElement('div');
       const imageRating = document.createElement('a');
-      imageRating.textContent = `Rating: ${image.description}`
+      imageRating.textContent = `Rating: ${image.avg_rating}`
       imageRatingDiv.appendChild(imageRating)
       imagesDescriptionDiv.appendChild(imageRatingDiv)
 
@@ -133,3 +143,4 @@ const getImeges = async () => {
 getImeges();
 }
 main()
+

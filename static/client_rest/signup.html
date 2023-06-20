@@ -23,10 +23,11 @@
 
       <ul class="nav col-md-4 justify-content-end">
         <li class="nav-item"><a href="index.html" class="nav-link px-2 text-body-secondary">Sign In</a>
-          <li class="nav-item"><a href="signup.html" class="nav-link px-2 text-body-secondary">Sign Up</a>
-          </li>
-          <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">bla-bla</a></li>
-          </li>
+        </li>
+        <li class="nav-item"><a href="https://svitlogram.fly.dev/docs" class="nav-link px-2 text-body-secondary">Documentation</a></li>
+        </li>
+        <li class="nav-item"><a href="https://github.com/gorandalex/svitlogramm" class="nav-link px-2 text-body-secondary">GitHub</a></li>
+        </li>
 
       </ul>
     </footer>
@@ -37,33 +38,33 @@
       <form>
         <img class="mb-4" src="static/Fireflies Vector.svg" alt="" width="200" >
         <h1 class="h3 mb-3 fw-normal">Please sign up</h1>
-
+        <div class = "badge d-flexp-1 text-warning-emphasis bg-warning-subtle border mb-4" id="return_message" ></div>
         <div class="form-floating">
             <input type="username" class="form-control" name="username" id="floatingInput" placeholder="User name">
             <label for="floatingInput">User name</label>
           </div>
         <div class="form-floating">
-          <input type="email" class="form-control" name="username" id="floatingInput" placeholder="name@example.com">
-          <label for="floatingInput">Email address</label>
+          <input type="email" class="form-control" name="email" id="floatingEmail" placeholder="name@example.com">
+          <label for="floatingEmail">Email address</label>
         </div>
         <div class="form-floating ">
-            <input type="first_name" class="form-control" name="first_name" id="floatingInput" placeholder="First Name">
-            <label for="floatingInput">First Name</label>
+            <input type="first_name" class="form-control" name="first_name" id="floatingFirstName" placeholder="First Name">
+            <label for="floatingFirstName">First Name</label>
           </div>
         <div class="form-floating ">
-            <input type="last_name" class="form-control" name="last_name" id="floatingInput" placeholder="Last Name">
-            <label for="floatingInput">Last Name</label>
+            <input type="last_name" class="form-control" name="last_name" id="floatingLastName" placeholder="Last Name">
+            <label for="floatingLastName">Last Name</label>
           </div>
         <div class="form-floating ">
-          <input type="password" class="form-control" name="password" id="floatingInput" placeholder="Password">
-          <label for="floatingInput">Password</label>
+          <input type="password" class="form-control" name="password" id="floatingPassword" placeholder="Password">
+          <label for="floatingPassword">Password</label>
         </div>
 
-        <button class="w-100 btn btn-lg btn-primary mb-2" type="submit">Sign in</button>
+        <button class="w-100 btn btn-lg btn-primary mb-2" type="submit">Sign up</button>
       </form>
     </main>
   </div>
-<script src="javascript/login.js"></script>
+<script src="../client_rest/javascript/signup.js"></script>
 </body>
 
 </html>
