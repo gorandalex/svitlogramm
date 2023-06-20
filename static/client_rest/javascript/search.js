@@ -1,6 +1,6 @@
 token = localStorage.getItem("accessToken")
 
-const baseUrl = 'http://127.0.0.1:8000'
+const baseUrl = 'https://svitlogram.fly.dev'
 
 const searchParams = new URLSearchParams(window.location.search);
 const searchValue = searchParams.get('search');

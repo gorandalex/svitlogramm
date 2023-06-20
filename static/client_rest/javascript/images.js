@@ -2,7 +2,7 @@ token = localStorage.getItem("accessToken")
 
 images = document.getElementById("images")
 
-const baseUrl = 'http://127.0.0.1:8000'
+const baseUrl = 'https://svitlogram.fly.dev'
 
 const getUserById = async (user_id) => {
   const myHeaders = new Headers();

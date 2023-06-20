@@ -10,6 +10,7 @@ router = APIRouter(prefix="/openai", tags=["Chat"])
 loop = asyncio.get_event_loop()
 executor = ThreadPoolExecutor()
 
+
 openai.api_key = settings.OPENAI_API_KEY
 
 
