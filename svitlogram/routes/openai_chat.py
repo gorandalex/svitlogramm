@@ -29,7 +29,7 @@ def start_chat(prompt):
     return response["choices"][0]["text"].strip()
 
 
-@router.get("/", dependencies=[Depends(RateLimiter(times=20, seconds=60))])
-async def generate_response(prompt):
-    response = await loop.run_in_executor(executor, functools.partial(start_chat, prompt))
+@router.get("/", dependencies=[Depends(RateLimiter(times=5, seconds=60))])
+async def generate_response(data: str):
+    response = await loop.run_in_executor(executor, functools.partial(start_chat, data))
     return response
