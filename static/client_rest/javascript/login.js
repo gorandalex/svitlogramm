@@ -10,7 +10,6 @@ const message = urlParams.get("message");
 returnMessage = document.getElementById("return_message")
 
 if (message) {
-    console.log(message);
     returnMessage.innerHTML = "";
     
     const lines = message.split("\n"); 

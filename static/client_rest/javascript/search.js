@@ -1,6 +1,6 @@
 token = localStorage.getItem("accessToken")
 
-const baseUrl = 'https://svitlogram.fly.dev'
+const baseUrl = 'https://svitlogram.fly.dev/'
 
 const searchParams = new URLSearchParams(window.location.search);
 const searchValue = searchParams.get('search');
@@ -41,26 +41,22 @@ const getSearch = async () => {
     const respons = await fetch(`${baseUrl}/api/users/search_all/?data=${searchValue}`, requestOptions)
     if (respons.status === 200) {
         result = await respons.json()
-        console.log(result);
         searchList = document.getElementById("search_list")
         searchList.innerHTML = ""
         if (result.users.length > 0) {
             const usersInfo = document.createElement("div")
             usersInfo.className = "col-lg-6 mx-auto mb-4"
-            console.log(result.users);
             for (const user of result.users) {
+                const el = document.createElement('div');
+                el.className = 'modal-content rounded-4 shadow';
 
                 const img = document.createElement('img');
                 img.src = user.avatar;
                 const avatar = document.createElement('img')
                 avatar.src = user.avatar;
                 avatar.style.borderRadius = '20%';
-                avatar.style.width = '200px';
+                avatar.style.width = '150px';
                 avatar.style.height = 'avto';
-
-
-                //const el1 = document.createElement('div')
-                //el1.className = "col-lg-6 mx-auto mb-4"
 
                 const el2 = document.createElement('div')
                 el2.className = "row"
@@ -112,7 +108,9 @@ const getSearch = async () => {
                 aboutUserDdiv.appendChild(userInfoUl)
                 el2.appendChild(avatarDiv)
                 el2.appendChild(aboutUserDdiv)
-                usersInfo.appendChild(el2)
+                
+                el.appendChild(el2)
+                usersInfo.appendChild(el)
             }
             searchList.appendChild(usersInfo)
         }

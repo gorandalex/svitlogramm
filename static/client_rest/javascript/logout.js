@@ -1,7 +1,5 @@
 token = localStorage.getItem("accessToken")
 
-const baseUrl = 'https://svitlogram.fly.dev'
-
 async function logout() {
     const url = `${baseUrl}/api/logout`;
     const token = localStorage.getItem("accessToken");

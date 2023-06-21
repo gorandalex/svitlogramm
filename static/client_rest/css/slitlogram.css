@@ -8784,6 +8784,69 @@ body {
          background: #4ba1fa;
          color: #fff;
          border: 1px solid transparent; }
+
    
-   
+         .star-rating{
+          font-size: 0;
+         }
+         .star-rating__wrap{
+          display: inline-block;
+          font-size: 1rem;
+         }
+         .star-rating__wrap:after{
+          content: "";
+          display: table;
+          clear: both;
+         }
+         .star-rating__ico{
+          float: right;
+          padding-left: 2px;
+          cursor: pointer;
+          color: #FFB300;
+         }
+         .star-rating__ico:last-child{
+          padding-left: 0;
+         }
+         .star-rating__input{
+          display: none;
+         }
+         .star-rating__ico:hover:before,
+         .star-rating__ico:hover ~ .star-rating__ico:before,
+         .star-rating__input:checked ~ .star-rating__ico:before
+         {
+          content: "\f005";
+         }
+
+         
+         .full-stars {
+          text-align: center;
+      }
+      .full-stars .rating-group {
+          display: inline-flex;
+      }
+      .full-stars input {
+          position: absolute;
+          left: -9999px;
+      }
+      .full-stars label {
+          margin: 0;
+          cursor: pointer;
+      }
+      .full-stars label svg {
+          margin: 2px;
+          height: 40px;
+          width: 40px;
+          fill: #337AB7;
+          transition: fill 0.3s;
+      }
+      .full-stars input:checked ~ label svg {
+          fill: #BFE2FF;
+      }
+      .full-stars .rating-group:hover label svg {
+          fill: #337AB7;
+      }
+      .full-stars .rating-group input:hover ~ label svg {
+          fill: #BFE2FF;
+      }
+      
    
