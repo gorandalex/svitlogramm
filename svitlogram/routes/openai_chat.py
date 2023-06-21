@@ -14,7 +14,7 @@ executor = ThreadPoolExecutor()
 openai.api_key = settings.OPENAI_API_KEY
 
 
-def start_chat(prompt):
+async def start_chat(prompt):
     assistant = "You are a helpful and creative assistant."
     """prompt = Reply to a question in a fun and creative way. 
     The answer has to be in English. The answer has to be no longer than 100 symbols. 
@@ -31,5 +31,5 @@ def start_chat(prompt):
 
 @router.get("/", dependencies=[Depends(RateLimiter(times=20, seconds=60))])
 async def generate_response(prompt):
-    response = await loop.run_in_executor(executor, functools.partial(start_chat, prompt))
+    response = await start_chat(prompt)
     return response
